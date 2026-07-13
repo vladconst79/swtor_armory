@@ -10,15 +10,15 @@ frontend/
 ```
 
 * [x] Update `.gitignore` for backend venvs, frontend dependencies/builds, logs, env files, IDE files, and OS noise.
-* [ ] Remove already tracked local IDE files from git while keeping them locally:
+* [x] Remove already tracked local IDE files from git while keeping them locally:
 
-    * [ ] `.idea/.gitignore`
-    * [ ] `.idea/misc.xml`
-    * [ ] `.idea/modules.xml`
-    * [ ] `.idea/vcs.xml`
-    * [ ] `swtor_new_armory.iml`
+    * [x] `.idea/.gitignore`
+    * [x] `.idea/misc.xml`
+    * [x] `.idea/modules.xml`
+    * [x] `.idea/vcs.xml`
+    * [x] `swtor_new_armory.iml`
 
-* [ ] Add a root `README.md` with setup and run commands.
+* [x] Add a root `README.md` with setup and run commands.
 * [ ] Add `backend/.env.example`.
 * [ ] Add `frontend/.env.example`.
 * [ ] Document the old Odoo addon as the source of truth:
@@ -396,4 +396,3 @@ Odoo create_uid -> new owner_id
 * [ ] Run Alembic migrations during deploy.
 * [ ] Document PostgreSQL backup and restore.
 * [ ] Document production environment variables.
-
