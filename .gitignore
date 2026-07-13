@@ -28,6 +28,7 @@ lerna-debug.log*
 !.env.example
 !backend/.env.example
 !frontend/.env.example
+DBConf.md
 *.local
 
 # IDE / editor

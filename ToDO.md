@@ -21,7 +21,7 @@ frontend/
 * [x] Add a root `README.md` with setup and run commands.
 * [x] Add `backend/.env.example`.
 * [x] Add `frontend/.env.example`.
-* [ ] Document the old Odoo addon as the source of truth:
+* [x] Document the old Odoo addon as the source of truth:
 
 ```text
 /opt/odoo16c/custom/addons/swtor_armory/docs/rebuild-notes.md
