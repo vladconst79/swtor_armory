@@ -19,8 +19,8 @@ frontend/
     * [x] `swtor_new_armory.iml`
 
 * [x] Add a root `README.md` with setup and run commands.
-* [ ] Add `backend/.env.example`.
-* [ ] Add `frontend/.env.example`.
+* [x] Add `backend/.env.example`.
+* [x] Add `frontend/.env.example`.
 * [ ] Document the old Odoo addon as the source of truth:
 
 ```text
