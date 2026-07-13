@@ -34,20 +34,20 @@ frontend/
 ## 2. Create Backend Skeleton
 
 * [x] Create a FastAPI application under `backend/`.
-* [ ] Add backend dependencies:
+* [x] Add backend dependencies:
 
-    * [ ] `fastapi`
-    * [ ] `uvicorn`
-    * [ ] `sqlalchemy`
-    * [ ] `alembic`
-    * [ ] `psycopg`
-    * [ ] `pydantic-settings`
+    * [x] `fastapi`
+    * [x] `uvicorn`
+    * [x] `sqlalchemy`
+    * [x] `alembic`
+    * [x] `psycopg`
+    * [x] `pydantic-settings`
 
-* [ ] Add app settings loaded from environment.
-* [ ] Add SQLAlchemy engine and session lifecycle.
-* [ ] Add Alembic configuration.
-* [ ] Add `GET /api/health`.
-* [ ] Add backend test setup.
+* [x] Add app settings loaded from environment.
+* [x] Add SQLAlchemy engine and session lifecycle.
+* [x] Add Alembic configuration.
+* [x] Add `GET /api/health`.
+* [x] Add backend test setup.
 
 ## 3. Implement Authentication and Permissions
 
