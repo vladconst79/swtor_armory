@@ -51,7 +51,7 @@ frontend/
 
 ## 3. Implement Authentication and Permissions
 
-* [ ] Add a user model.
+* [x] Add a user model.
 * [ ] Choose auth mechanism:
 
     * [ ] JWT
