@@ -23,7 +23,7 @@ The old Odoo addon is the source of truth for the initial rebuild:
 
 ```text
 .
-├── backend/    FastAPI backend, not scaffolded yet
+├── backend/    FastAPI backend
 ├── frontend/   Vite React frontend
 ├── ToDO.md     implementation roadmap
 └── README.md
@@ -37,7 +37,7 @@ The old Odoo addon is the source of truth for the initial rebuild:
 
 ## Backend Setup
 
-The virtualenv already lives at `backend/.venv`, but the FastAPI application files still need to be created.
+The virtualenv already lives at `backend/.venv`.
 
 When setting up from scratch:
 
@@ -45,15 +45,23 @@ When setting up from scratch:
 cd backend
 python -m venv .venv
 source .venv/bin/activate
-pip install fastapi uvicorn sqlalchemy alembic psycopg pydantic-settings
+pip install -r requirements.txt
 ```
 
-Once the backend app exists, the expected local run command will be:
+Run the backend:
 
 ```bash
 cd backend
 source .venv/bin/activate
 uvicorn app.main:app --reload
+```
+
+Run backend tests:
+
+```bash
+cd backend
+source .venv/bin/activate
+pytest
 ```
 
 ## Frontend Setup
@@ -95,9 +103,9 @@ npm run preview
 
 ## Database
 
-The target database is PostgreSQL. The exact schema and migrations will be created under `backend/` with SQLAlchemy and Alembic.
+The target database is PostgreSQL. Migrations live under `backend/alembic/` and are managed with Alembic.
 
-Expected local environment variables will be documented in `backend/.env.example` once backend settings are added.
+Expected local environment variables are documented in `backend/.env.example`.
 
 ## Security Model
 
@@ -116,4 +124,3 @@ SWTOR admins should be able to manage reference data and all user-owned records.
 ## Implementation Plan
 
 See `ToDO.md` for the staged rebuild checklist.
-

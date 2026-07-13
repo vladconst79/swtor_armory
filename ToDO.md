@@ -33,7 +33,7 @@ frontend/
 
 ## 2. Create Backend Skeleton
 
-* [ ] Create a FastAPI application under `backend/`.
+* [x] Create a FastAPI application under `backend/`.
 * [ ] Add backend dependencies:
 
     * [ ] `fastapi`
