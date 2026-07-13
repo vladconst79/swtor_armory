@@ -54,16 +54,16 @@ frontend/
 * [x] Add a user model.
 * [ ] Choose auth mechanism:
 
-    * [ ] JWT
+    * [x] JWT
     * [ ] cookie sessions
     * [ ] other
 
-* [ ] Implement login.
-* [ ] Implement current-user dependency.
-* [ ] Add user roles:
+* [x] Implement login.
+* [x] Implement current-user dependency.
+* [x] Add user roles:
 
-    * [ ] normal user
-    * [ ] SWTOR admin
+    * [x] normal user
+    * [x] SWTOR admin
 
 * [ ] Port Odoo owner-only record rules from `security/security.xml`.
 * [ ] Enforce owner-only access for:
