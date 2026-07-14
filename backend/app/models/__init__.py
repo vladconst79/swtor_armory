@@ -1,3 +1,14 @@
+from app.models.associations import (
+    character_class_names,
+    character_items,
+    character_loadouts,
+    character_roles,
+    character_titles,
+    character_vehicles,
+    class_name_roles,
+    crew_skill_related_skills,
+    operation_difficulties,
+)
 from app.models.reference import (
     ClassName,
     CrewSkill,
@@ -38,4 +49,13 @@ __all__ = [
     "Title",
     "User",
     "Vehicle",
+    "character_class_names",
+    "character_items",
+    "character_loadouts",
+    "character_roles",
+    "character_titles",
+    "character_vehicles",
+    "class_name_roles",
+    "crew_skill_related_skills",
+    "operation_difficulties",
 ]

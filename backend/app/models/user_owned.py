@@ -4,6 +4,14 @@ from sqlalchemy import Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
+from app.models.associations import (
+    character_class_names,
+    character_items,
+    character_loadouts,
+    character_roles,
+    character_titles,
+    character_vehicles,
+)
 from app.models.mixins import ActiveMixin, IdMixin, OwnedModelMixin, TimestampMixin
 
 
@@ -36,6 +44,15 @@ class Character(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
         back_populates="character",
         cascade="all, delete-orphan",
     )
+    class_names: Mapped[list["ClassName"]] = relationship(secondary=character_class_names, back_populates="characters")
+    roles: Mapped[list["Role"]] = relationship(secondary=character_roles, back_populates="characters")
+    loadouts: Mapped[list["Loadout"]] = relationship(secondary=character_loadouts, back_populates="characters")
+    items: Mapped[list["Item"]] = relationship(secondary=character_items, back_populates="characters")
+    vehicle_records: Mapped[list["Vehicle"]] = relationship(
+        secondary=character_vehicles,
+        back_populates="characters",
+    )
+    title_records: Mapped[list["Title"]] = relationship(secondary=character_titles, back_populates="characters")
 
 
 class Loadout(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
@@ -50,6 +67,8 @@ class Loadout(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
     role_id: Mapped[int | None] = mapped_column(ForeignKey("roles.id"), index=True)
     spec_id: Mapped[int | None] = mapped_column(ForeignKey("specs.id"), index=True)
 
+    characters: Mapped[list[Character]] = relationship(secondary=character_loadouts, back_populates="loadouts")
+
 
 class Item(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
     __tablename__ = "items"
@@ -60,6 +79,8 @@ class Item(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
     bound: Mapped[bool] = mapped_column(nullable=False, server_default="false", index=True)
     cargo_hold: Mapped[str] = mapped_column(String(50), nullable=False, server_default="cargo_hold", index=True)
     cargo_bay: Mapped[int] = mapped_column(Integer, nullable=False, server_default="1", index=True)
+
+    characters: Mapped[list[Character]] = relationship(secondary=character_items, back_populates="items")
 
 
 class CharacterCrewSkillRelation(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):

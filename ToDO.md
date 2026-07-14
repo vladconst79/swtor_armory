@@ -110,17 +110,17 @@ frontend/
     * [x] `Vehicle`
     * [x] `Guild`, unless guilds become user-owned
 
-* [ ] Create many-to-many association tables:
+* [x] Create many-to-many association tables:
 
-    * [ ] character class names
-    * [ ] character roles
-    * [ ] character loadouts
-    * [ ] character items
-    * [ ] character vehicles
-    * [ ] character titles
-    * [ ] class name roles
-    * [ ] crew skill related skills
-    * [ ] operation difficulties
+    * [x] character class names
+    * [x] character roles
+    * [x] character loadouts
+    * [x] character items
+    * [x] character vehicles
+    * [x] character titles
+    * [x] class name roles
+    * [x] crew skill related skills
+    * [x] operation difficulties
 
 * [ ] Decide how binary fields are stored:
 

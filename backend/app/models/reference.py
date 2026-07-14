@@ -2,6 +2,15 @@ from sqlalchemy import ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
+from app.models.associations import (
+    character_class_names,
+    character_roles,
+    character_titles,
+    character_vehicles,
+    class_name_roles,
+    crew_skill_related_skills,
+    operation_difficulties,
+)
 from app.models.mixins import ActiveMixin, IdMixin, TimestampMixin
 
 
@@ -11,6 +20,13 @@ class CrewSkill(IdMixin, TimestampMixin, ActiveMixin, Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
     skill_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
+    related_skills: Mapped[list["CrewSkill"]] = relationship(
+        "CrewSkill",
+        secondary=crew_skill_related_skills,
+        primaryjoin=lambda: CrewSkill.id == crew_skill_related_skills.c.skill_id,
+        secondaryjoin=lambda: CrewSkill.id == crew_skill_related_skills.c.related_skill_id,
+    )
+
 
 class Operation(IdMixin, TimestampMixin, ActiveMixin, Base):
     __tablename__ = "operations"
@@ -19,6 +35,10 @@ class Operation(IdMixin, TimestampMixin, ActiveMixin, Base):
     short_name: Mapped[str | None] = mapped_column(String(50), index=True)
 
     bosses: Mapped[list["OperationBoss"]] = relationship(back_populates="operation")
+    difficulties: Mapped[list["OperationDifficulty"]] = relationship(
+        secondary=operation_difficulties,
+        back_populates="operations",
+    )
 
 
 class OperationDifficulty(IdMixin, TimestampMixin, ActiveMixin, Base):
@@ -27,6 +47,11 @@ class OperationDifficulty(IdMixin, TimestampMixin, ActiveMixin, Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True, index=True)
     full_name: Mapped[str] = mapped_column(String(255), nullable=False)
     color: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+
+    operations: Mapped[list[Operation]] = relationship(
+        secondary=operation_difficulties,
+        back_populates="difficulties",
+    )
 
 
 class OperationBoss(IdMixin, TimestampMixin, ActiveMixin, Base):
@@ -53,6 +78,8 @@ class ClassName(IdMixin, TimestampMixin, ActiveMixin, Base):
     power_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     specs: Mapped[list["Spec"]] = relationship(back_populates="class_name")
+    characters: Mapped[list["Character"]] = relationship(secondary=character_class_names, back_populates="class_names")
+    roles: Mapped[list["Role"]] = relationship(secondary=class_name_roles, back_populates="class_names")
 
 
 class Role(IdMixin, TimestampMixin, ActiveMixin, Base):
@@ -62,6 +89,8 @@ class Role(IdMixin, TimestampMixin, ActiveMixin, Base):
     color: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
 
     specs: Mapped[list["Spec"]] = relationship(back_populates="role")
+    characters: Mapped[list["Character"]] = relationship(secondary=character_roles, back_populates="roles")
+    class_names: Mapped[list[ClassName]] = relationship(secondary=class_name_roles, back_populates="roles")
 
 
 class Spec(IdMixin, TimestampMixin, ActiveMixin, Base):
@@ -85,6 +114,8 @@ class Title(IdMixin, TimestampMixin, ActiveMixin, Base):
     operation_id: Mapped[int | None] = mapped_column(ForeignKey("operations.id"), index=True)
     operation_difficulty_id: Mapped[int | None] = mapped_column(ForeignKey("operation_difficulties.id"), index=True)
 
+    characters: Mapped[list["Character"]] = relationship(secondary=character_titles, back_populates="title_records")
+
 
 class Vehicle(IdMixin, TimestampMixin, ActiveMixin, Base):
     __tablename__ = "vehicles"
@@ -96,6 +127,11 @@ class Vehicle(IdMixin, TimestampMixin, ActiveMixin, Base):
     operation_difficulty_id: Mapped[int | None] = mapped_column(ForeignKey("operation_difficulties.id"), index=True)
     icon_filename: Mapped[str | None] = mapped_column(String(255))
     icon_url: Mapped[str | None] = mapped_column(String(2048))
+
+    characters: Mapped[list["Character"]] = relationship(
+        secondary=character_vehicles,
+        back_populates="vehicle_records",
+    )
 
 
 class Guild(IdMixin, TimestampMixin, ActiveMixin, Base):
