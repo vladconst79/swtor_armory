@@ -85,92 +85,88 @@ const ReferenceRowActions = ({ record }: { record?: RaRecord }) => {
   )
 }
 
-const ClassNameFields = () => (
-  <>
-    <TextField source="name" />
-    <TextField source="power_type" label="Power Type" />
-    <ReferenceArrayField source="role_ids" reference="roles" label="Roles">
-      <SingleFieldList linkType={false}>
-        <ChipField source="name" />
-      </SingleFieldList>
-    </ReferenceArrayField>
-    <BooleanField source="active" />
-  </>
-)
+const classNameFields = [
+  <TextField key="name" source="name" />,
+  <TextField key="power_type" source="power_type" label="Power Type" />,
+  <ReferenceArrayField key="role_ids" source="role_ids" reference="roles" label="Roles">
+    <SingleFieldList linkType={false}>
+      <ChipField source="name" />
+    </SingleFieldList>
+  </ReferenceArrayField>,
+  <BooleanField key="active" source="active" />,
+]
 
-const OriginStoryFields = () => (
-  <>
-    <TextField source="name" />
-    <TextField source="power_type" label="Power Type" />
-    <BooleanField source="active" />
-  </>
-)
+const originStoryFields = [
+  <TextField key="name" source="name" />,
+  <TextField key="power_type" source="power_type" label="Power Type" />,
+  <BooleanField key="active" source="active" />,
+]
 
-const RoleFields = () => (
-  <>
-    <TextField source="name" />
-    <NumberField source="color" />
-    <ReferenceArrayField source="class_name_ids" reference="class-names" label="Classes">
-      <SingleFieldList linkType={false}>
-        <ChipField source="name" />
-      </SingleFieldList>
-    </ReferenceArrayField>
-    <BooleanField source="active" />
-  </>
-)
+const roleFields = [
+  <TextField key="name" source="name" />,
+  <NumberField key="color" source="color" />,
+  <ReferenceArrayField key="class_name_ids" source="class_name_ids" reference="class-names" label="Classes">
+    <SingleFieldList linkType={false}>
+      <ChipField source="name" />
+    </SingleFieldList>
+  </ReferenceArrayField>,
+  <BooleanField key="active" source="active" />,
+]
 
-const SpecFields = () => (
-  <>
-    <TextField source="name" />
-    <ReferenceField source="class_name_id" reference="class-names" label="Class" />
-    <ReferenceField source="role_id" reference="roles" label="Role" />
-    <ReferenceField source="mirror_spec_id" reference="specs" label="Mirror Spec" />
-    <BooleanField source="active" />
-  </>
-)
+const specFields = [
+  <TextField key="name" source="name" />,
+  <ReferenceField key="class_name_id" source="class_name_id" reference="class-names" label="Class" />,
+  <ReferenceField key="role_id" source="role_id" reference="roles" label="Role" />,
+  <ReferenceField key="mirror_spec_id" source="mirror_spec_id" reference="specs" label="Mirror Spec" />,
+  <BooleanField key="active" source="active" />,
+]
 
-const TitleFields = () => (
-  <>
-    <TextField source="name" />
-    <TextField source="source" />
-    <TextField source="type" />
-    <ReferenceField source="operation_id" reference="operations" label="Operation" />
-    <ReferenceField source="operation_difficulty_id" reference="operation-difficulties" label="Difficulty" />
-    <TextField source="icon_url" label="Icon URL" />
-    <BooleanField source="active" />
-  </>
-)
+const titleFields = [
+  <TextField key="name" source="name" />,
+  <TextField key="source" source="source" />,
+  <TextField key="type" source="type" />,
+  <ReferenceField key="operation_id" source="operation_id" reference="operations" label="Operation" />,
+  <ReferenceField
+    key="operation_difficulty_id"
+    source="operation_difficulty_id"
+    reference="operation-difficulties"
+    label="Difficulty"
+  />,
+  <TextField key="icon_url" source="icon_url" label="Icon URL" />,
+  <BooleanField key="active" source="active" />,
+]
 
-const VehicleFields = () => (
-  <>
-    <TextField source="name" />
-    <TextField source="source" />
-    <TextField source="bind" />
-    <ReferenceField source="operation_id" reference="operations" label="Operation" />
-    <ReferenceField source="operation_difficulty_id" reference="operation-difficulties" label="Difficulty" />
-    <TextField source="icon_url" label="Icon URL" />
-    <BooleanField source="active" />
-  </>
-)
+const vehicleFields = [
+  <TextField key="name" source="name" />,
+  <TextField key="source" source="source" />,
+  <TextField key="bind" source="bind" />,
+  <ReferenceField key="operation_id" source="operation_id" reference="operations" label="Operation" />,
+  <ReferenceField
+    key="operation_difficulty_id"
+    source="operation_difficulty_id"
+    reference="operation-difficulties"
+    label="Difficulty"
+  />,
+  <TextField key="icon_url" source="icon_url" label="Icon URL" />,
+  <BooleanField key="active" source="active" />,
+]
 
-const GuildFields = () => (
-  <>
-    <TextField source="name" />
-    <TextField source="guildmaster" />
-    <NumberField source="member_count" label="Members" />
-    <TextField source="description" />
-    <BooleanField source="active" />
-  </>
-)
+const guildFields = [
+  <TextField key="name" source="name" />,
+  <TextField key="guildmaster" source="guildmaster" />,
+  <NumberField key="member_count" source="member_count" label="Members" />,
+  <TextField key="description" source="description" />,
+  <BooleanField key="active" source="active" />,
+]
 
-const ReferenceFields = ({ kind }: { kind: ReferenceFormKind }) => {
-  if (kind === 'class') return <ClassNameFields />
-  if (kind === 'origin') return <OriginStoryFields />
-  if (kind === 'role') return <RoleFields />
-  if (kind === 'spec') return <SpecFields />
-  if (kind === 'title') return <TitleFields />
-  if (kind === 'vehicle') return <VehicleFields />
-  return <GuildFields />
+const referenceFields = (kind: ReferenceFormKind) => {
+  if (kind === 'class') return classNameFields
+  if (kind === 'origin') return originStoryFields
+  if (kind === 'role') return roleFields
+  if (kind === 'spec') return specFields
+  if (kind === 'title') return titleFields
+  if (kind === 'vehicle') return vehicleFields
+  return guildFields
 }
 
 const ReferenceForm = ({ kind }: { kind: ReferenceFormKind }) => (
@@ -244,7 +240,7 @@ const ReferenceForm = ({ kind }: { kind: ReferenceFormKind }) => (
 const ReferenceListBase = ({ kind, sortField = 'name' }: { kind: ReferenceFormKind; sortField?: string }) => (
   <List filters={referenceFilters} perPage={25} sort={{ field: sortField, order: 'ASC' }}>
     <Datagrid bulkActionButtons={false} rowClick="show">
-      <ReferenceFields kind={kind} />
+      {referenceFields(kind)}
       <ReferenceRowActions />
     </Datagrid>
   </List>
@@ -253,7 +249,7 @@ const ReferenceListBase = ({ kind, sortField = 'name' }: { kind: ReferenceFormKi
 const ReferenceShowBase = ({ kind }: { kind: ReferenceFormKind }) => (
   <Show>
     <SimpleShowLayout>
-      <ReferenceFields kind={kind} />
+      {referenceFields(kind)}
     </SimpleShowLayout>
   </Show>
 )

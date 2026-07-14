@@ -90,6 +90,18 @@ export const resources: ResourceDefinition[] = [
     ],
   },
   {
+    name: 'operation-bosses',
+    label: 'Operation Bosses',
+    adminManaged: true,
+    fields: [
+      { source: 'id', kind: 'number', readOnly: true },
+      { source: 'name', required: true },
+      { source: 'operation_id', label: 'Operation', kind: 'number' },
+      { source: 'sequence', kind: 'number' },
+      { source: 'active', kind: 'boolean' },
+    ],
+  },
+  {
     name: 'operation-lockouts',
     label: 'Lockouts',
     fields: [

@@ -14,6 +14,10 @@ import { ItemCreate, ItemEdit, ItemList, ItemShow } from './items'
 import { LoadoutCreate, LoadoutEdit, LoadoutList, LoadoutShow } from './loadouts'
 import {
   OperationCreate,
+  OperationBossCreate,
+  OperationBossEdit,
+  OperationBossList,
+  OperationBossShow,
   OperationEdit,
   OperationList,
   OperationLockoutCreate,
@@ -156,6 +160,14 @@ const resourceComponents = (resource: ResourceDefinition) => {
       show: OperationShow,
       create: OperationCreate,
       edit: OperationEdit,
+    }
+  }
+  if (resource.name === 'operation-bosses') {
+    return {
+      list: OperationBossList,
+      show: OperationBossShow,
+      create: OperationBossCreate,
+      edit: OperationBossEdit,
     }
   }
   if (resource.name === 'operation-lockouts') {

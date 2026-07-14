@@ -14,10 +14,12 @@ import {
   FunctionField,
   List,
   NumberField,
+  NumberInput,
   ReferenceArrayField,
   ReferenceArrayInput,
   ReferenceField,
   ReferenceInput,
+  ReferenceManyField,
   SearchInput,
   Show,
   ShowButton,
@@ -33,6 +35,14 @@ import {
 const operationFilters = [
   <SearchInput key="q" source="q" alwaysOn />,
   <ReferenceArrayInput key="difficulty_ids" source="difficulty_ids" reference="operation-difficulties" label="Difficulties">
+    <AutocompleteArrayInput optionText="name" />
+  </ReferenceArrayInput>,
+  <BooleanInput key="active" source="active" />,
+]
+
+const bossFilters = [
+  <SearchInput key="q" source="q" alwaysOn />,
+  <ReferenceArrayInput key="operation_id" source="operation_id" reference="operations" label="Operations">
     <AutocompleteArrayInput optionText="name" />
   </ReferenceArrayInput>,
   <BooleanInput key="active" source="active" />,
@@ -103,6 +113,17 @@ const OperationLockoutForm = () => (
   </SimpleForm>
 )
 
+const OperationBossForm = () => (
+  <SimpleForm>
+    <TextInput source="name" validate={[required()]} fullWidth />
+    <ReferenceInput source="operation_id" reference="operations" label="Operation">
+      <AutocompleteInput optionText="name" validate={[required()]} />
+    </ReferenceInput>
+    <NumberInput source="sequence" validate={[required()]} />
+    <BooleanInput source="active" />
+  </SimpleForm>
+)
+
 export const OperationList = () => (
   <List filters={operationFilters} perPage={25} sort={{ field: 'name', order: 'ASC' }}>
     <Datagrid bulkActionButtons={false} rowClick="show">
@@ -130,6 +151,19 @@ export const OperationShow = () => (
         </SingleFieldList>
       </ReferenceArrayField>
       <BooleanField source="active" />
+      <ReferenceManyField
+        label="Bosses"
+        reference="operation-bosses"
+        target="operation_id"
+        sort={{ field: 'sequence', order: 'ASC' }}
+      >
+        <Datagrid bulkActionButtons={false} rowClick="show">
+          <NumberField source="sequence" />
+          <TextField source="name" />
+          <BooleanField source="active" />
+          <OperationRowActions />
+        </Datagrid>
+      </ReferenceManyField>
     </SimpleShowLayout>
   </Show>
 )
@@ -143,6 +177,41 @@ export const OperationCreate = () => (
 export const OperationEdit = () => (
   <Edit>
     <OperationForm />
+  </Edit>
+)
+
+export const OperationBossList = () => (
+  <List filters={bossFilters} perPage={25} sort={{ field: 'operation_id', order: 'ASC' }}>
+    <Datagrid bulkActionButtons={false} rowClick="show">
+      <ReferenceField source="operation_id" reference="operations" label="Operation" />
+      <NumberField source="sequence" />
+      <TextField source="name" />
+      <BooleanField source="active" />
+      <OperationRowActions />
+    </Datagrid>
+  </List>
+)
+
+export const OperationBossShow = () => (
+  <Show>
+    <SimpleShowLayout>
+      <TextField source="name" />
+      <ReferenceField source="operation_id" reference="operations" label="Operation" />
+      <NumberField source="sequence" />
+      <BooleanField source="active" />
+    </SimpleShowLayout>
+  </Show>
+)
+
+export const OperationBossCreate = () => (
+  <Create>
+    <OperationBossForm />
+  </Create>
+)
+
+export const OperationBossEdit = () => (
+  <Edit>
+    <OperationBossForm />
   </Edit>
 )
 
