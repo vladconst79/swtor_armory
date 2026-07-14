@@ -52,7 +52,7 @@ frontend/
 ## 3. Implement Authentication and Permissions
 
 * [x] Add a user model.
-* [ ] Choose auth mechanism:
+* [x] Choose auth mechanism:
 
     * [x] JWT
     * [ ] cookie sessions
@@ -80,13 +80,13 @@ frontend/
 
 ## 4. Build Core Database Models
 
-* [ ] Add shared model fields consistently:
+* [x] Add shared model fields consistently:
 
-    * [ ] `id`
-    * [ ] `created_at`
-    * [ ] `updated_at`
-    * [ ] `owner_id` for user-owned records
-    * [ ] `active`
+    * [x] `id`
+    * [x] `created_at`
+    * [x] `updated_at`
+    * [x] `owner_id` for user-owned records
+    * [x] `active`
 
 * [ ] Create user-owned models:
 
