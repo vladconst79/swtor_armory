@@ -369,7 +369,63 @@ Odoo create_uid -> new owner_id
 * [ ] Add a verification script comparing record counts.
 * [ ] Add a verification script checking important relationships.
 
-## 16. Decide Achievement Scope
+## 16. Rework Frontend UX Toward Existing Odoo Quality Bar
+
+Decision notes:
+
+* [ ] Treat the current React Admin resource screens as functional scaffolding, not the final product UI.
+* [ ] Keep the backend/API/auth/permissions/tests work; it is still useful and should not be thrown away.
+* [ ] Reuse frontend plumbing where practical:
+
+    * [ ] auth provider
+    * [ ] data provider/API client
+    * [ ] route/resource wiring where it still helps
+    * [ ] validation and permission patterns
+
+* [ ] Stop relying on generic React Admin list/show pages for core SWTOR domains.
+* [ ] Use the existing Odoo UI screenshots as the design reference for density, layout, and domain presentation.
+
+Target UX direction:
+
+* [ ] Prefer top domain navigation over a long generic resource sidebar.
+* [ ] Build dense, readable table views for high-volume records.
+* [ ] Use meaningful SWTOR visual language:
+
+    * [ ] role pills/colors
+    * [ ] difficulty pills/colors
+    * [ ] guild logos
+    * [ ] mount/title/item icons where available
+    * [ ] progress bars for completion/rank/progress fields
+
+* [ ] Build entity pages around relationships, not raw fields.
+* [ ] Use tabs for embedded related records:
+
+    * [ ] character loadouts
+    * [ ] character crew skills
+    * [ ] character items
+    * [ ] character titles
+    * [ ] character mounts
+    * [ ] character operation lockouts
+    * [ ] guild characters
+    * [ ] crew skill characters/related skills
+
+Proof-of-direction step:
+
+* [ ] Rebuild the Characters area first to match the old UI pattern:
+
+    * [ ] top navigation shell
+    * [ ] dense character list
+    * [ ] role/class/faction/guild visual formatting
+    * [ ] character detail page
+    * [ ] embedded tab tables
+    * [ ] create/edit controls that feel intentional, not generic
+
+* [ ] Compare the rebuilt Characters area against the old Odoo screenshots.
+* [ ] If the quality bar is reachable inside React Admin, continue replacing important pages with custom screens.
+* [ ] If React Admin fights the target UX too much, switch to a custom Vite/React shell using the same backend API.
+* [ ] Keep generic CRUD only for boring admin/reference data where it does not hurt the user experience.
+
+## 17. Decide Achievement Scope
 
 * [ ] Review `models/achievement.py`.
 * [ ] Decide whether achievements are in scope for v1.
@@ -382,7 +438,7 @@ Odoo create_uid -> new owner_id
 * [ ] If out of scope, document that achievements are postponed.
 * [ ] Note that achievements exist in the old models but are not loaded through the old manifest menus/security.
 
-## 17. Prepare Deployment
+## 18. Prepare Deployment
 
 * [ ] Add backend production run configuration.
 * [ ] Add frontend production build command.
