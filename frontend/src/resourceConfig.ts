@@ -30,6 +30,19 @@ export const resources: ResourceDefinition[] = [
     ],
   },
   {
+    name: 'users',
+    label: 'Users',
+    adminManaged: true,
+    fields: [
+      { source: 'id', kind: 'number', readOnly: true },
+      { source: 'username', required: true },
+      { source: 'is_active', label: 'Active', kind: 'boolean' },
+      { source: 'is_swtor_admin', label: 'SWTOR Admin', kind: 'boolean' },
+      { source: 'created_at', label: 'Created', kind: 'date', readOnly: true },
+      { source: 'updated_at', label: 'Updated', kind: 'date', readOnly: true },
+    ],
+  },
+  {
     name: 'items',
     label: 'Items',
     fields: [

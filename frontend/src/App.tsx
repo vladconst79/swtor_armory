@@ -58,6 +58,7 @@ import {
 } from './referenceAdmin'
 import { ResourceCreate, ResourceEdit, ResourceList, ResourceShow } from './resources'
 import { resources, type ResourceDefinition } from './resourceConfig'
+import { UserCreate, UserEdit, UserList, UserShow } from './users'
 
 const theme = {
   palette: {
@@ -120,6 +121,14 @@ const resourceComponents = (resource: ResourceDefinition) => {
       show: CharacterShow,
       create: CharacterCreate,
       edit: CharacterEdit,
+    }
+  }
+  if (resource.name === 'users') {
+    return {
+      list: UserList,
+      show: UserShow,
+      create: UserCreate,
+      edit: UserEdit,
     }
   }
   if (resource.name === 'loadouts') {
