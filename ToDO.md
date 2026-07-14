@@ -122,9 +122,9 @@ frontend/
     * [x] crew skill related skills
     * [x] operation difficulties
 
-* [ ] Decide how binary fields are stored:
+* [x] Decide how binary fields are stored:
 
-    * [ ] PostgreSQL columns
+    * [x] PostgreSQL columns
     * [ ] uploaded files
     * [ ] static frontend assets
 

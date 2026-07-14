@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Integer, String, Text
+from sqlalchemy import ForeignKey, Integer, LargeBinary, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -76,6 +76,7 @@ class ClassName(IdMixin, TimestampMixin, ActiveMixin, Base):
 
     name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
     power_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    class_icon: Mapped[bytes | None] = mapped_column(LargeBinary)
 
     specs: Mapped[list["Spec"]] = relationship(back_populates="class_name")
     characters: Mapped[list["Character"]] = relationship(secondary=character_class_names, back_populates="class_names")
@@ -87,6 +88,7 @@ class Role(IdMixin, TimestampMixin, ActiveMixin, Base):
 
     name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
     color: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    icon: Mapped[bytes | None] = mapped_column(LargeBinary)
 
     specs: Mapped[list["Spec"]] = relationship(back_populates="role")
     characters: Mapped[list["Character"]] = relationship(secondary=character_roles, back_populates="roles")
@@ -113,6 +115,9 @@ class Title(IdMixin, TimestampMixin, ActiveMixin, Base):
     type: Mapped[str | None] = mapped_column(String(50), index=True)
     operation_id: Mapped[int | None] = mapped_column(ForeignKey("operations.id"), index=True)
     operation_difficulty_id: Mapped[int | None] = mapped_column(ForeignKey("operation_difficulties.id"), index=True)
+    icon: Mapped[bytes | None] = mapped_column(LargeBinary)
+    icon_filename: Mapped[str | None] = mapped_column(String(255))
+    icon_url: Mapped[str | None] = mapped_column(String(2048))
 
     characters: Mapped[list["Character"]] = relationship(secondary=character_titles, back_populates="title_records")
 
@@ -125,6 +130,7 @@ class Vehicle(IdMixin, TimestampMixin, ActiveMixin, Base):
     bind: Mapped[str | None] = mapped_column(String(50), index=True)
     operation_id: Mapped[int | None] = mapped_column(ForeignKey("operations.id"), index=True)
     operation_difficulty_id: Mapped[int | None] = mapped_column(ForeignKey("operation_difficulties.id"), index=True)
+    icon: Mapped[bytes | None] = mapped_column(LargeBinary)
     icon_filename: Mapped[str | None] = mapped_column(String(255))
     icon_url: Mapped[str | None] = mapped_column(String(2048))
 
@@ -139,5 +145,6 @@ class Guild(IdMixin, TimestampMixin, ActiveMixin, Base):
 
     name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
     description: Mapped[str | None] = mapped_column(Text)
+    image: Mapped[bytes | None] = mapped_column(LargeBinary)
     guildmaster: Mapped[str | None] = mapped_column(String(255))
     member_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
