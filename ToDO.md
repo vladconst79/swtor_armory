@@ -96,19 +96,19 @@ frontend/
     * [x] `CharacterCrewSkillRelation`
     * [x] `OperationLockout`
 
-* [ ] Create reference/admin-managed models:
+* [x] Create reference/admin-managed models:
 
-    * [ ] `CrewSkill`
-    * [ ] `Operation`
-    * [ ] `OperationDifficulty`
-    * [ ] `OperationBoss`
-    * [ ] `OriginStory`
-    * [ ] `ClassName`
-    * [ ] `Role`
-    * [ ] `Spec`
-    * [ ] `Title`
-    * [ ] `Vehicle`
-    * [ ] `Guild`, unless guilds become user-owned
+    * [x] `CrewSkill`
+    * [x] `Operation`
+    * [x] `OperationDifficulty`
+    * [x] `OperationBoss`
+    * [x] `OriginStory`
+    * [x] `ClassName`
+    * [x] `Role`
+    * [x] `Spec`
+    * [x] `Title`
+    * [x] `Vehicle`
+    * [x] `Guild`, unless guilds become user-owned
 
 * [ ] Create many-to-many association tables:
 
