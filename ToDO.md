@@ -214,14 +214,14 @@ frontend/
 
 ## 10. Port Titles, Vehicles, and Guilds
 
-* [ ] Add title fields from `models/title.py`.
-* [ ] Add vehicle fields from `models/vehicle.py`.
-* [ ] Add guild fields from `models/guild.py`.
-* [ ] Implement guild member count.
-* [ ] Decide whether free-text character guild names should create guild records.
-* [ ] Implement legacy title grant to all current user's characters.
-* [ ] Implement legacy-bound vehicle grant to all current user's characters.
-* [ ] Decide how vehicle icon URLs should be fetched and stored.
+* [x] Add title fields from `models/title.py`.
+* [x] Add vehicle fields from `models/vehicle.py`.
+* [x] Add guild fields from `models/guild.py`.
+* [x] Implement guild member count.
+* [x] Decide whether free-text character guild names should create guild records.
+* [x] Implement legacy title grant to all current user's characters.
+* [x] Implement legacy-bound vehicle grant to all current user's characters.
+* [x] Decide how vehicle icon URLs should be fetched and stored.
 
 ## 11. Seed Reference Data
 

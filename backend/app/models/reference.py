@@ -1,4 +1,6 @@
+import mimetypes
 from typing import ClassVar
+from urllib.parse import urlparse
 
 from sqlalchemy import ForeignKey, Integer, LargeBinary, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
@@ -145,6 +147,23 @@ class Spec(IdMixin, TimestampMixin, ActiveMixin, Base):
 class Title(IdMixin, TimestampMixin, ActiveMixin, Base):
     __tablename__ = "titles"
 
+    ALLOWED_SOURCES: ClassVar[frozenset[str]] = frozenset(
+        {
+            "operation",
+            "flashpoint",
+            "pvp",
+            "pve",
+            "space",
+            "cartel",
+            "reputation",
+            "crafting",
+            "event",
+            "promotion",
+            "subscription",
+        }
+    )
+    ALLOWED_TYPES: ClassVar[frozenset[str]] = frozenset({"legacy", "character"})
+
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     source: Mapped[str | None] = mapped_column(String(50), index=True)
     type: Mapped[str | None] = mapped_column(String(50), index=True)
@@ -156,9 +175,51 @@ class Title(IdMixin, TimestampMixin, ActiveMixin, Base):
 
     characters: Mapped[list["Character"]] = relationship(secondary=character_titles, back_populates="title_records")
 
+    @validates("source")
+    def validate_source(self, key: str, source: str | None) -> str | None:
+        if source is not None and source not in self.ALLOWED_SOURCES:
+            raise ValueError("Title source is not supported.")
+        return source
+
+    @validates("type")
+    def validate_type(self, key: str, title_type: str | None) -> str | None:
+        if title_type is not None and title_type not in self.ALLOWED_TYPES:
+            raise ValueError("Title type must be either legacy or character.")
+        return title_type
+
+    def grant_to_characters(self, characters: list["Character"]) -> None:
+        if self.type != "legacy":
+            return
+
+        for character in characters:
+            if self not in character.title_records:
+                character.title_records.append(self)
+
 
 class Vehicle(IdMixin, TimestampMixin, ActiveMixin, Base):
     __tablename__ = "vehicles"
+
+    ALLOWED_SOURCES: ClassVar[frozenset[str]] = frozenset(
+        {
+            "operation",
+            "flashpoint",
+            "world_boss",
+            "pvp",
+            "pve",
+            "space",
+            "cartel",
+            "reputation",
+            "crafting",
+            "event",
+            "vendor",
+            "promotion",
+            "subscription",
+        }
+    )
+    ALLOWED_BINDINGS: ClassVar[frozenset[str]] = frozenset(
+        {"bind_on_pickup", "bind_on_equip", "bind_on_legacy"}
+    )
+    ICON_STORAGE_MODE: ClassVar[str] = "store_url_and_filename_metadata; fetch_binary_in_service"
 
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     source: Mapped[str | None] = mapped_column(String(50), index=True)
@@ -174,12 +235,77 @@ class Vehicle(IdMixin, TimestampMixin, ActiveMixin, Base):
         back_populates="vehicle_records",
     )
 
+    @validates("source")
+    def validate_source(self, key: str, source: str | None) -> str | None:
+        if source is not None and source not in self.ALLOWED_SOURCES:
+            raise ValueError("Vehicle source is not supported.")
+        return source
+
+    @validates("bind")
+    def validate_bind(self, key: str, bind: str | None) -> str | None:
+        if bind is not None and bind not in self.ALLOWED_BINDINGS:
+            raise ValueError("Vehicle bind type is not supported.")
+        return bind
+
+    @validates("icon_url")
+    def validate_icon_url(self, key: str, icon_url: str | None) -> str | None:
+        if icon_url is not None and not self.is_supported_icon_url(icon_url):
+            raise ValueError("Vehicle icon URL must point to an image.")
+        return icon_url
+
+    @staticmethod
+    def is_supported_icon_url(icon_url: str) -> bool:
+        parsed_url = urlparse(icon_url)
+        mimetype, _ = mimetypes.guess_type(parsed_url.path)
+        return bool(parsed_url.scheme in {"http", "https"} and mimetype and mimetype.startswith("image/"))
+
+    def sync_icon_metadata_from_url(self) -> None:
+        if not self.icon_url:
+            self.icon_filename = None
+            return
+
+        self.icon_filename = urlparse(self.icon_url).path.rsplit("/", maxsplit=1)[-1] or None
+
+    def grant_to_characters(self, characters: list["Character"]) -> None:
+        if self.bind != "bind_on_legacy":
+            return
+
+        for character in characters:
+            if self not in character.vehicle_records:
+                character.vehicle_records.append(self)
+
 
 class Guild(IdMixin, TimestampMixin, ActiveMixin, Base):
     __tablename__ = "guilds"
+
+    CREATE_FROM_FREE_TEXT_GUILD_NAMES: ClassVar[bool] = True
 
     name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
     description: Mapped[str | None] = mapped_column(Text)
     image: Mapped[bytes | None] = mapped_column(LargeBinary)
     guildmaster: Mapped[str | None] = mapped_column(String(255))
     member_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+
+    characters: Mapped[list["Character"]] = relationship("Character", back_populates="guild_record")
+
+    def sync_member_count(self) -> None:
+        self.member_count = len(self.characters)
+
+    @classmethod
+    def find_or_create_from_character_guild(
+        cls,
+        character: "Character",
+        existing_guilds: list["Guild"],
+    ) -> "Guild | None":
+        if not cls.CREATE_FROM_FREE_TEXT_GUILD_NAMES or not character.guild:
+            return None
+
+        for guild in existing_guilds:
+            if guild.name == character.guild:
+                character.guild_record = guild
+                return guild
+
+        guild = cls(name=character.guild)
+        existing_guilds.append(guild)
+        character.guild_record = guild
+        return guild

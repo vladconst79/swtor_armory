@@ -69,7 +69,7 @@ class Character(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
         cascade="all, delete-orphan",
     )
     origin_story: Mapped[OriginStory | None] = relationship("OriginStory")
-    guild_record: Mapped[Guild | None] = relationship("Guild")
+    guild_record: Mapped[Guild | None] = relationship("Guild", back_populates="characters")
     class_names: Mapped[list[ClassName]] = relationship(secondary=character_class_names, back_populates="characters")
     roles: Mapped[list[Role]] = relationship(secondary=character_roles, back_populates="characters")
     loadouts: Mapped[list["Loadout"]] = relationship(secondary=character_loadouts, back_populates="characters")
