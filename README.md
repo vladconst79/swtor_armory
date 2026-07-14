@@ -107,6 +107,22 @@ The target database is PostgreSQL. Migrations live under `backend/alembic/` and 
 
 Expected local environment variables are documented in `backend/.env.example`.
 
+Create or update `backend/.env` so `DATABASE_URL` points at the target database, then run migrations:
+
+```bash
+cd backend
+.venv/bin/python -m alembic upgrade head
+```
+
+Seed the reference data after migrations:
+
+```bash
+cd backend
+.venv/bin/python -c "from app.db.session import SessionLocal; from app.db.seed import seed_reference_data; db = SessionLocal(); seed_reference_data(db); db.close()"
+```
+
+The seed script is idempotent and can be run again without duplicating reference records. The API does not currently auto-seed on startup, so deployments should run migrations and reference seeding as explicit deploy steps.
+
 ## Security Model
 
 The old Odoo module used owner-only record rules based on `create_uid = user.id` for user-owned data. In this rebuild, that behavior must be enforced in the FastAPI backend.
