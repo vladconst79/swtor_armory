@@ -1,7 +1,8 @@
 from datetime import date
+from typing import ClassVar
 
-from sqlalchemy import Float, ForeignKey, Integer, String, Text
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Float, ForeignKey, Integer, LargeBinary, String, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.db.base import Base
 from app.models.associations import (
@@ -13,10 +14,18 @@ from app.models.associations import (
     character_vehicles,
 )
 from app.models.mixins import ActiveMixin, IdMixin, OwnedModelMixin, TimestampMixin
+from app.models.reference import ClassName, CrewSkill, Guild, OriginStory, Role, Title, Vehicle
 
 
 class Character(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
     __tablename__ = "characters"
+
+    MAX_LEVEL: ClassVar[int] = 80
+    MAX_VALOR_RANK: ClassVar[int] = 100
+    MAX_CLASS_NAMES: ClassVar[int] = 2
+    MAX_CREW_SKILLS: ClassVar[int] = 3
+    MAX_CRAFTING_CREW_SKILLS: ClassVar[int] = 1
+    MAX_LOADOUTS: ClassVar[int] = 10
 
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     display_name: Mapped[str | None] = mapped_column(String(255))
@@ -31,6 +40,7 @@ class Character(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
     guild_id: Mapped[int | None] = mapped_column(ForeignKey("guilds.id"), index=True)
     alignment: Mapped[str | None] = mapped_column(String(50))
     notes: Mapped[str | None] = mapped_column(Text)
+    faction_icon: Mapped[bytes | None] = mapped_column(LargeBinary)
     valor_rank: Mapped[int | None] = mapped_column(Integer)
     crew_skills_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
     mounts: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
@@ -44,15 +54,92 @@ class Character(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
         back_populates="character",
         cascade="all, delete-orphan",
     )
-    class_names: Mapped[list["ClassName"]] = relationship(secondary=character_class_names, back_populates="characters")
-    roles: Mapped[list["Role"]] = relationship(secondary=character_roles, back_populates="characters")
+    origin_story: Mapped[OriginStory | None] = relationship("OriginStory")
+    guild_record: Mapped[Guild | None] = relationship("Guild")
+    class_names: Mapped[list[ClassName]] = relationship(secondary=character_class_names, back_populates="characters")
+    roles: Mapped[list[Role]] = relationship(secondary=character_roles, back_populates="characters")
     loadouts: Mapped[list["Loadout"]] = relationship(secondary=character_loadouts, back_populates="characters")
     items: Mapped[list["Item"]] = relationship(secondary=character_items, back_populates="characters")
-    vehicle_records: Mapped[list["Vehicle"]] = relationship(
+    vehicle_records: Mapped[list[Vehicle]] = relationship(
         secondary=character_vehicles,
         back_populates="characters",
     )
-    title_records: Mapped[list["Title"]] = relationship(secondary=character_titles, back_populates="characters")
+    title_records: Mapped[list[Title]] = relationship(secondary=character_titles, back_populates="characters")
+
+    @validates("level")
+    def validate_level(self, key: str, level: int | None) -> int | None:
+        if level is not None and not 1 <= level <= self.MAX_LEVEL:
+            raise ValueError(f"Level must be between 1 and {self.MAX_LEVEL}.")
+        return level
+
+    @validates("valor_rank")
+    def validate_valor_rank(self, key: str, valor_rank: int | None) -> int | None:
+        if valor_rank is not None and not 1 <= valor_rank <= self.MAX_VALOR_RANK:
+            raise ValueError(f"Valor rank must be between 1 and {self.MAX_VALOR_RANK}.")
+        return valor_rank
+
+    @property
+    def available_roles(self) -> list[Role]:
+        roles: list[Role] = []
+        seen_keys: set[int] = set()
+        for class_name in self.class_names:
+            for role in class_name.roles:
+                role_key = role.id if role.id is not None else id(role)
+                if role_key not in seen_keys:
+                    roles.append(role)
+                    seen_keys.add(role_key)
+        return roles
+
+    def sync_derived_fields(self) -> None:
+        self.display_name = self.derive_display_name()
+        self.titles = len(self.title_records)
+        self.mounts = len(self.vehicle_records)
+        self.crew_skills_count = len(self.crew_skill_relations)
+
+    def derive_display_name(self) -> str:
+        guild_name = self.guild_record.name if self.guild_record is not None else self.guild
+        if guild_name:
+            return f"[{guild_name}] {self.name}"
+        return self.name
+
+    def validate_character_rules(self) -> None:
+        self.validate_level("level", self.level)
+        self.validate_valor_rank("valor_rank", self.valor_rank)
+        self._validate_class_names()
+        self._validate_crew_skills()
+        self._validate_loadouts()
+
+    def _validate_class_names(self) -> None:
+        if len(self.class_names) > self.MAX_CLASS_NAMES:
+            raise ValueError(f"A character can have no more than {self.MAX_CLASS_NAMES} class names.")
+
+        if self.origin_story is None:
+            return
+
+        mismatched_class_names = [
+            class_name.name
+            for class_name in self.class_names
+            if class_name.power_type != self.origin_story.power_type
+        ]
+        if mismatched_class_names:
+            raise ValueError("Class names must have the same power type as the origin story.")
+
+    def _validate_crew_skills(self) -> None:
+        if len(self.crew_skill_relations) > self.MAX_CREW_SKILLS:
+            raise ValueError(f"A character can have no more than {self.MAX_CREW_SKILLS} crew skills.")
+
+        crafting_count = sum(
+            1
+            for relation in self.crew_skill_relations
+            if relation.skill_type == "crafting"
+            or (relation.crew_skill is not None and relation.crew_skill.skill_type == "crafting")
+        )
+        if crafting_count > self.MAX_CRAFTING_CREW_SKILLS:
+            raise ValueError("A character can have no more than 1 crafting crew skill.")
+
+    def _validate_loadouts(self) -> None:
+        if len(self.loadouts) > self.MAX_LOADOUTS:
+            raise ValueError(f"A character can have no more than {self.MAX_LOADOUTS} loadouts.")
 
 
 class Loadout(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
@@ -95,6 +182,7 @@ class CharacterCrewSkillRelation(IdMixin, TimestampMixin, ActiveMixin, OwnedMode
     progress: Mapped[float] = mapped_column(Float, nullable=False, server_default="0")
 
     character: Mapped[Character] = relationship(back_populates="crew_skill_relations")
+    crew_skill: Mapped[CrewSkill] = relationship("CrewSkill")
 
 
 class OperationLockout(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):

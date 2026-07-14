@@ -130,19 +130,19 @@ frontend/
 
 ## 5. Port Character Rules
 
-* [ ] Add character fields from `models/character.py`.
-* [ ] Validate level is between 1 and 80.
-* [ ] Validate valor rank is between 1 and 100.
-* [ ] Allow no more than 2 class names.
-* [ ] Require class names to match origin story power type.
-* [ ] Allow no more than 3 crew skills.
-* [ ] Allow no more than 1 crafting crew skill.
-* [ ] Allow no more than 10 loadouts.
-* [ ] Derive display name from guild and character name.
-* [ ] Derive title count.
-* [ ] Derive mount count.
-* [ ] Derive crew skill count.
-* [ ] Derive available roles from selected class names.
+* [x] Add character fields from `models/character.py`.
+* [x] Validate level is between 1 and 80.
+* [x] Validate valor rank is between 1 and 100.
+* [x] Allow no more than 2 class names.
+* [x] Require class names to match origin story power type.
+* [x] Allow no more than 3 crew skills.
+* [x] Allow no more than 1 crafting crew skill.
+* [x] Allow no more than 10 loadouts.
+* [x] Derive display name from guild and character name.
+* [x] Derive title count.
+* [x] Derive mount count.
+* [x] Derive crew skill count.
+* [x] Derive available roles from selected class names.
 
 ## 6. Port Crew Skill Rules
 
