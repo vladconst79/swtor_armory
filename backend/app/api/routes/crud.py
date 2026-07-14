@@ -204,6 +204,11 @@ def _apply_filters(
             if relationship_query is not None:
                 query = relationship_query
                 continue
+        if model is OperationLockout:
+            relationship_query = _apply_operation_lockout_filter(query, field, value)
+            if relationship_query is not None:
+                query = relationship_query
+                continue
         if model is Character:
             relationship_query = _apply_character_relationship_filter(query, field, value)
             if relationship_query is not None:
@@ -272,6 +277,29 @@ def _apply_character_link_filter(
 
     if field in {"character_id", "character_ids"}:
         return query.where(model.characters.any(Character.id.in_(values)))
+    return None
+
+
+def _apply_operation_lockout_filter(query: Select[Any], field: str, value: Any) -> Select[Any] | None:
+    if field == "current_week":
+        if bool(value):
+            week_start, week_end = OperationLockout.current_week_filter(date.today())
+            return query.where(OperationLockout.week >= week_start, OperationLockout.week <= week_end)
+        return query
+
+    values = value if isinstance(value, list) else [value]
+    values = [filter_value for filter_value in values if filter_value not in {None, ""}]
+    if not values:
+        return query
+
+    if field in {"character_id", "character_ids"}:
+        return query.where(OperationLockout.character_id.in_(values))
+    if field in {"operation_id", "operation_ids"}:
+        return query.where(OperationLockout.operation_id.in_(values))
+    if field in {"difficulty_id", "difficulty_ids"}:
+        return query.where(OperationLockout.difficulty_id.in_(values))
+    if field in {"boss_id", "boss_ids"}:
+        return query.where(OperationLockout.boss_id.in_(values))
     return None
 
 

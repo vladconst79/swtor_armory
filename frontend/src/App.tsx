@@ -6,6 +6,16 @@ import { CrewSkillCreate, CrewSkillEdit, CrewSkillList, CrewSkillShow } from './
 import { dataProvider } from './dataProvider'
 import { ItemCreate, ItemEdit, ItemList, ItemShow } from './items'
 import { LoadoutCreate, LoadoutEdit, LoadoutList, LoadoutShow } from './loadouts'
+import {
+  OperationCreate,
+  OperationEdit,
+  OperationList,
+  OperationLockoutCreate,
+  OperationLockoutEdit,
+  OperationLockoutList,
+  OperationLockoutShow,
+  OperationShow,
+} from './operations'
 import { ResourceCreate, ResourceEdit, ResourceList, ResourceShow } from './resources'
 import { resources, type ResourceDefinition } from './resourceConfig'
 
@@ -94,6 +104,22 @@ const resourceComponents = (resource: ResourceDefinition) => {
       show: CrewSkillShow,
       create: CrewSkillCreate,
       edit: CrewSkillEdit,
+    }
+  }
+  if (resource.name === 'operations') {
+    return {
+      list: OperationList,
+      show: OperationShow,
+      create: OperationCreate,
+      edit: OperationEdit,
+    }
+  }
+  if (resource.name === 'operation-lockouts') {
+    return {
+      list: OperationLockoutList,
+      show: OperationLockoutShow,
+      create: OperationLockoutCreate,
+      edit: OperationLockoutEdit,
     }
   }
 

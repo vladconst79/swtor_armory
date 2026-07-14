@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from datetime import date, timedelta
 from urllib.parse import quote
 
 import pytest
@@ -12,7 +13,19 @@ from app.db.base import Base
 from app.db.seed import seed_reference_data
 from app.db.session import get_db
 from app.main import app
-from app.models import Character, CrewSkill, Item, Loadout, OriginStory, Role, User
+from app.models import (
+    Character,
+    CrewSkill,
+    Item,
+    Loadout,
+    Operation,
+    OperationBoss,
+    OperationDifficulty,
+    OperationLockout,
+    OriginStory,
+    Role,
+    User,
+)
 
 
 @pytest.fixture
@@ -256,3 +269,45 @@ def test_loadout_and_item_lists_support_character_and_mine_filters(
     assert [record["name"] for record in item_response.json()["data"]] == ["Owned Item"]
     assert mine_response.status_code == 200
     assert [record["name"] for record in mine_response.json()["data"]] == ["Owned Item"]
+
+
+def test_operation_lockout_list_supports_current_week_and_relationship_filters(
+    api_client: TestClient,
+    api_db: Session,
+) -> None:
+    character = Character(name="Lockout Character", faction="republic", owner_id=2)
+    operation = api_db.scalar(select(Operation).where(Operation.name == "Eternity Vault"))
+    boss = api_db.scalar(select(OperationBoss).where(OperationBoss.name == "Gharj"))
+    difficulty = api_db.scalar(select(OperationDifficulty).where(OperationDifficulty.name == "SM"))
+    week_start, _ = OperationLockout.current_week_filter(date.today())
+    old_week = week_start - timedelta(days=7)
+    current_lockout = OperationLockout(
+        owner_id=2,
+        character=character,
+        operation=operation,
+        boss=boss,
+        difficulty=difficulty,
+        week=week_start,
+    )
+    old_lockout = OperationLockout(
+        owner_id=2,
+        character=character,
+        operation=operation,
+        boss=boss,
+        difficulty=difficulty,
+        week=old_week,
+    )
+    api_db.add_all([current_lockout, old_lockout])
+    api_db.commit()
+
+    current_response = api_client.get('/api/operation-lockouts?filter={"current_week":true}', headers=auth_headers(2))
+    operation_response = api_client.get(
+        f'/api/operation-lockouts?filter={{"operation_ids":[{operation.id}]}}',
+        headers=auth_headers(2),
+    )
+
+    assert current_response.status_code == 200
+    assert current_response.json()["total"] == 1
+    assert current_response.json()["data"][0]["week"] == week_start.isoformat()
+    assert operation_response.status_code == 200
+    assert operation_response.json()["total"] == 2

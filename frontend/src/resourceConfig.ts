@@ -77,6 +77,18 @@ export const resources: ResourceDefinition[] = [
     ],
   },
   {
+    name: 'operation-lockouts',
+    label: 'Lockouts',
+    fields: [
+      { source: 'id', kind: 'number', readOnly: true },
+      { source: 'name', readOnly: true },
+      { source: 'week', kind: 'date' },
+      { source: 'faction', readOnly: true },
+      { source: 'completion_rate', label: 'Complete %', kind: 'number', readOnly: true },
+      { source: 'owner_id', label: 'Owner', kind: 'number', readOnly: true },
+    ],
+  },
+  {
     name: 'class-names',
     label: 'Classes',
     adminManaged: true,
