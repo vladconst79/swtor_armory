@@ -293,24 +293,24 @@ frontend/
 
 ## 13. Create Frontend Shell
 
-* [ ] Remove Vite starter UI.
-* [ ] Set up React Admin.
-* [ ] Configure API data provider.
-* [ ] Configure auth provider.
-* [ ] Add a SWTOR-focused app layout.
-* [ ] Add navigation matching the old Odoo menu:
+* [x] Remove Vite starter UI.
+* [x] Set up React Admin.
+* [x] Configure API data provider.
+* [x] Configure auth provider.
+* [x] Add a SWTOR-focused app layout.
+* [x] Add navigation matching the old Odoo menu:
 
-    * [ ] Characters
-    * [ ] Items
-    * [ ] Crew Skills
-    * [ ] Operations
-    * [ ] Classes
-    * [ ] Titles
-    * [ ] Mounts
-    * [ ] Guilds
+    * [x] Characters
+    * [x] Items
+    * [x] Crew Skills
+    * [x] Operations
+    * [x] Classes
+    * [x] Titles
+    * [x] Mounts
+    * [x] Guilds
 
-* [ ] Hide admin-only create/edit/delete actions from normal users.
-* [ ] Keep backend permission checks as the real security boundary.
+* [x] Hide admin-only create/edit/delete actions from normal users.
+* [x] Keep backend permission checks as the real security boundary.
 
 ## 14. Build Frontend Resources
 
