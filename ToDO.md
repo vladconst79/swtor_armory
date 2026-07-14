@@ -65,18 +65,18 @@ frontend/
     * [x] normal user
     * [x] SWTOR admin
 
-* [ ] Port Odoo owner-only record rules from `security/security.xml`.
-* [ ] Enforce owner-only access for:
+* [x] Port Odoo owner-only record rules from `security/security.xml`.
+* [x] Enforce owner-only access for:
 
-    * [ ] characters
-    * [ ] loadouts
-    * [ ] items
-    * [ ] character crew skill relations
-    * [ ] operation lockouts
+    * [x] characters
+    * [x] loadouts
+    * [x] items
+    * [x] character crew skill relations
+    * [x] operation lockouts
 
-* [ ] Enforce admin-only writes for reference data.
-* [ ] Add tests proving users cannot read, edit, or delete another user's records.
-* [ ] Add tests proving normal users cannot write reference data.
+* [x] Enforce admin-only writes for reference data.
+* [x] Add tests proving users cannot read, edit, or delete another user's records.
+* [x] Add tests proving normal users cannot write reference data.
 
 ## 4. Build Core Database Models
 
@@ -262,34 +262,34 @@ frontend/
 
 ## 12. Build CRUD API
 
-* [ ] Choose API response format for React Admin.
-* [ ] Implement pagination.
-* [ ] Implement sorting.
-* [ ] Implement filtering.
-* [ ] Implement reference lookup endpoints.
-* [ ] Implement CRUD endpoints for:
+* [x] Choose API response format for React Admin.
+* [x] Implement pagination.
+* [x] Implement sorting.
+* [x] Implement filtering.
+* [x] Implement reference lookup endpoints.
+* [x] Implement CRUD endpoints for:
 
-    * [ ] characters
-    * [ ] loadouts
-    * [ ] items
-    * [ ] crew skills
-    * [ ] character crew skill relations
-    * [ ] operations
-    * [ ] operation difficulties
-    * [ ] operation bosses
-    * [ ] operation lockouts
-    * [ ] origin stories
-    * [ ] class names
-    * [ ] roles
-    * [ ] specs
-    * [ ] titles
-    * [ ] vehicles
-    * [ ] guilds
+    * [x] characters
+    * [x] loadouts
+    * [x] items
+    * [x] crew skills
+    * [x] character crew skill relations
+    * [x] operations
+    * [x] operation difficulties
+    * [x] operation bosses
+    * [x] operation lockouts
+    * [x] origin stories
+    * [x] class names
+    * [x] roles
+    * [x] specs
+    * [x] titles
+    * [x] vehicles
+    * [x] guilds
 
-* [ ] Add API tests for CRUD behavior.
-* [ ] Add API tests for filters and sorting.
-* [ ] Add API tests for constraints.
-* [ ] Add API tests for permissions.
+* [x] Add API tests for CRUD behavior.
+* [x] Add API tests for filters and sorting.
+* [x] Add API tests for constraints.
+* [x] Add API tests for permissions.
 
 ## 13. Create Frontend Shell
 
