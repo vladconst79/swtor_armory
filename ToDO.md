@@ -225,40 +225,40 @@ frontend/
 
 ## 11. Seed Reference Data
 
-* [ ] Convert Odoo `post_init_hook` data into idempotent seed scripts or Alembic data migrations.
-* [ ] Seed crew skills.
-* [ ] Seed operation difficulties:
+* [x] Convert Odoo `post_init_hook` data into idempotent seed scripts or Alembic data migrations.
+* [x] Seed crew skills.
+* [x] Seed operation difficulties:
 
-    * [ ] SM / Story Mode
-    * [ ] VM / Veteran Mode
-    * [ ] MM / Master Mode
+    * [x] SM / Story Mode
+    * [x] VM / Veteran Mode
+    * [x] MM / Master Mode
 
-* [ ] Seed operations and bosses:
+* [x] Seed operations and bosses:
 
-    * [ ] Eternity Vault
-    * [ ] Karagga's Palace
-    * [ ] Explosive Conflict
-    * [ ] Terror From Beyond
-    * [ ] Scum and Villainy
-    * [ ] Dread Fortress
-    * [ ] Dread Palace
-    * [ ] The Ravagers
-    * [ ] Temple of Sacrifice
-    * [ ] Gods From the Machine
-    * [ ] The Nature of Progress
-    * [ ] R-4 Anomaly
+    * [x] Eternity Vault
+    * [x] Karagga's Palace
+    * [x] Explosive Conflict
+    * [x] Terror From Beyond
+    * [x] Scum and Villainy
+    * [x] Dread Fortress
+    * [x] Dread Palace
+    * [x] The Ravagers
+    * [x] Temple of Sacrifice
+    * [x] Gods From the Machine
+    * [x] The Nature of Progress
+    * [x] R-4 Anomaly
 
-* [ ] Seed origin stories.
-* [ ] Seed class names.
-* [ ] Seed roles:
+* [x] Seed origin stories.
+* [x] Seed class names.
+* [x] Seed roles:
 
-    * [ ] Tank
-    * [ ] Healer
-    * [ ] DPS
+    * [x] Tank
+    * [x] Healer
+    * [x] DPS
 
-* [ ] Seed all combat specs.
-* [ ] Seed all mirror-spec relationships.
-* [ ] Make repeated seed runs safe.
+* [x] Seed all combat specs.
+* [x] Seed all mirror-spec relationships.
+* [x] Make repeated seed runs safe.
 
 ## 12. Build CRUD API
 
