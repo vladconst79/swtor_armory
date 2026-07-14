@@ -160,16 +160,16 @@ frontend/
 
 ## 7. Port Loadout Rules
 
-* [ ] Add loadout fields from `models/character.py`.
-* [ ] Support loadout types:
+* [x] Add loadout fields from `models/character.py`.
+* [x] Support loadout types:
 
-    * [ ] PvE
-    * [ ] PvP
+    * [x] PvE
+    * [x] PvP
 
-* [ ] Validate Parsely loadout URLs.
-* [ ] Derive role from selected spec.
-* [ ] Derive Parsely iframe or replace it with a safer frontend preview/link.
-* [ ] Restrict available characters by spec, mirror spec, and role.
+* [x] Validate Parsely loadout URLs.
+* [x] Derive role from selected spec.
+* [x] Derive Parsely iframe or replace it with a safer frontend preview/link.
+* [x] Restrict available characters by spec, mirror spec, and role.
 
 ## 8. Port Item Rules
 

@@ -139,6 +139,7 @@ class Spec(IdMixin, TimestampMixin, ActiveMixin, Base):
 
     role: Mapped[Role] = relationship(back_populates="specs")
     class_name: Mapped[ClassName] = relationship(back_populates="specs")
+    mirror_spec: Mapped["Spec | None"] = relationship("Spec", remote_side="Spec.id")
 
 
 class Title(IdMixin, TimestampMixin, ActiveMixin, Base):

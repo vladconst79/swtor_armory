@@ -1,3 +1,5 @@
+import base64
+import re
 from datetime import date
 from typing import ClassVar
 
@@ -14,7 +16,7 @@ from app.models.associations import (
     character_vehicles,
 )
 from app.models.mixins import ActiveMixin, IdMixin, OwnedModelMixin, TimestampMixin
-from app.models.reference import ClassName, CrewSkill, Guild, OriginStory, Role, Title, Vehicle
+from app.models.reference import ClassName, CrewSkill, Guild, OriginStory, Role, Spec, Title, Vehicle
 
 
 class Character(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
@@ -145,6 +147,12 @@ class Character(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
 class Loadout(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
     __tablename__ = "loadouts"
 
+    ALLOWED_LOADOUT_TYPES: ClassVar[frozenset[str]] = frozenset({"pve", "pvp"})
+    PARSELY_URL_PATTERN: ClassVar[re.Pattern[str]] = re.compile(
+        r"^https://parsely\.io/parser/combat-styles/[a-z]+/[A-Za-z0-9+/=]+$"
+    )
+    PARSELY_BUILD_PATTERN: ClassVar[re.Pattern[str]] = re.compile(r"^[1-3]{8}$")
+
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     sequence: Mapped[int] = mapped_column(Integer, nullable=False, server_default="10")
     loadout_type: Mapped[str] = mapped_column(String(50), nullable=False)
@@ -155,6 +163,76 @@ class Loadout(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
     spec_id: Mapped[int | None] = mapped_column(ForeignKey("specs.id"), index=True)
 
     characters: Mapped[list[Character]] = relationship(secondary=character_loadouts, back_populates="loadouts")
+    role: Mapped[Role | None] = relationship("Role")
+    spec: Mapped[Spec | None] = relationship("Spec", foreign_keys=[spec_id])
+
+    @validates("loadout_type")
+    def validate_loadout_type(self, key: str, loadout_type: str) -> str:
+        if loadout_type not in self.ALLOWED_LOADOUT_TYPES:
+            raise ValueError("Loadout type must be either pve or pvp.")
+        return loadout_type
+
+    @validates("loadout_url")
+    def validate_loadout_url(self, key: str, loadout_url: str | None) -> str | None:
+        if loadout_url is not None and not self.is_valid_parsely_url(loadout_url):
+            raise ValueError("Loadout URL must be a valid Parsely combat style link.")
+        return loadout_url
+
+    @classmethod
+    def is_valid_parsely_url(cls, loadout_url: str) -> bool:
+        if not cls.PARSELY_URL_PATTERN.match(loadout_url):
+            return False
+
+        encoded_build = loadout_url.rsplit("/", maxsplit=1)[-1]
+        try:
+            decoded_build = base64.b64decode(encoded_build, validate=True).decode()
+        except (ValueError, UnicodeDecodeError):
+            return False
+
+        return bool(cls.PARSELY_BUILD_PATTERN.fullmatch(decoded_build))
+
+    def derive_role(self) -> Role | None:
+        return self.spec.role if self.spec is not None else None
+
+    def derive_preview_url(self) -> str | None:
+        return self.loadout_url
+
+    def sync_derived_fields(self) -> None:
+        role = self.derive_role()
+        self.role = role
+        self.role_id = role.id if role is not None else None
+        self.loadout_iframe = self.derive_preview_url()
+
+    def available_characters(self, characters: list[Character]) -> list[Character]:
+        if self.spec is None:
+            return []
+
+        valid_class_names = [self.spec.class_name]
+        if self.spec.mirror_spec is not None:
+            valid_class_names.append(self.spec.mirror_spec.class_name)
+
+        valid_class_name_keys = {
+            class_name.id if class_name.id is not None else id(class_name)
+            for class_name in valid_class_names
+            if class_name is not None
+        }
+        role = self.derive_role()
+        role_key = role.id if role is not None and role.id is not None else id(role)
+
+        available_characters: list[Character] = []
+        for character in characters:
+            character_class_name_keys = {
+                class_name.id if class_name.id is not None else id(class_name)
+                for class_name in character.class_names
+            }
+            character_role_keys = {
+                character_role.id if character_role.id is not None else id(character_role)
+                for character_role in character.roles
+            }
+            if character_class_name_keys & valid_class_name_keys and role_key in character_role_keys:
+                available_characters.append(character)
+
+        return available_characters
 
 
 class Item(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
