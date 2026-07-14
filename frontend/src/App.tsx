@@ -16,6 +16,36 @@ import {
   OperationLockoutShow,
   OperationShow,
 } from './operations'
+import {
+  ClassNameCreate,
+  ClassNameEdit,
+  ClassNameList,
+  ClassNameShow,
+  GuildCreate,
+  GuildEdit,
+  GuildList,
+  GuildShow,
+  OriginStoryCreate,
+  OriginStoryEdit,
+  OriginStoryList,
+  OriginStoryShow,
+  RoleCreate,
+  RoleEdit,
+  RoleList,
+  RoleShow,
+  SpecCreate,
+  SpecEdit,
+  SpecList,
+  SpecShow,
+  TitleCreate,
+  TitleEdit,
+  TitleList,
+  TitleShow,
+  VehicleCreate,
+  VehicleEdit,
+  VehicleList,
+  VehicleShow,
+} from './referenceAdmin'
 import { ResourceCreate, ResourceEdit, ResourceList, ResourceShow } from './resources'
 import { resources, type ResourceDefinition } from './resourceConfig'
 
@@ -120,6 +150,62 @@ const resourceComponents = (resource: ResourceDefinition) => {
       show: OperationLockoutShow,
       create: OperationLockoutCreate,
       edit: OperationLockoutEdit,
+    }
+  }
+  if (resource.name === 'class-names') {
+    return {
+      list: ClassNameList,
+      show: ClassNameShow,
+      create: ClassNameCreate,
+      edit: ClassNameEdit,
+    }
+  }
+  if (resource.name === 'guilds') {
+    return {
+      list: GuildList,
+      show: GuildShow,
+      create: GuildCreate,
+      edit: GuildEdit,
+    }
+  }
+  if (resource.name === 'origin-stories') {
+    return {
+      list: OriginStoryList,
+      show: OriginStoryShow,
+      create: OriginStoryCreate,
+      edit: OriginStoryEdit,
+    }
+  }
+  if (resource.name === 'roles') {
+    return {
+      list: RoleList,
+      show: RoleShow,
+      create: RoleCreate,
+      edit: RoleEdit,
+    }
+  }
+  if (resource.name === 'specs') {
+    return {
+      list: SpecList,
+      show: SpecShow,
+      create: SpecCreate,
+      edit: SpecEdit,
+    }
+  }
+  if (resource.name === 'titles') {
+    return {
+      list: TitleList,
+      show: TitleShow,
+      create: TitleCreate,
+      edit: TitleEdit,
+    }
+  }
+  if (resource.name === 'vehicles') {
+    return {
+      list: VehicleList,
+      show: VehicleShow,
+      create: VehicleCreate,
+      edit: VehicleEdit,
     }
   }
 

@@ -100,6 +100,41 @@ export const resources: ResourceDefinition[] = [
     ],
   },
   {
+    name: 'origin-stories',
+    label: 'Origin Stories',
+    adminManaged: true,
+    fields: [
+      { source: 'id', kind: 'number', readOnly: true },
+      { source: 'name', required: true },
+      { source: 'power_type', label: 'Power Type', required: true },
+      { source: 'active', kind: 'boolean' },
+    ],
+  },
+  {
+    name: 'roles',
+    label: 'Roles',
+    adminManaged: true,
+    fields: [
+      { source: 'id', kind: 'number', readOnly: true },
+      { source: 'name', required: true },
+      { source: 'color', kind: 'number' },
+      { source: 'active', kind: 'boolean' },
+    ],
+  },
+  {
+    name: 'specs',
+    label: 'Specs',
+    adminManaged: true,
+    fields: [
+      { source: 'id', kind: 'number', readOnly: true },
+      { source: 'name', required: true },
+      { source: 'role_id', label: 'Role', kind: 'number' },
+      { source: 'class_name_id', label: 'Class', kind: 'number' },
+      { source: 'mirror_spec_id', label: 'Mirror Spec', kind: 'number' },
+      { source: 'active', kind: 'boolean' },
+    ],
+  },
+  {
     name: 'titles',
     label: 'Titles',
     adminManaged: true,

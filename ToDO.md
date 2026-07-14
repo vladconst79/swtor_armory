@@ -331,10 +331,10 @@ frontend/
 * [ ] Build character crew skill editor.
 * [x] Build operation screens.
 * [x] Build operation lockout screen with current-week default.
-* [ ] Build origin story, class, role, and spec screens.
-* [ ] Build title screens.
-* [ ] Build mount screens.
-* [ ] Build guild screens.
+* [x] Build origin story, class, role, and spec screens.
+* [x] Build title screens.
+* [x] Build mount screens.
+* [x] Build guild screens.
 
 ## 15. Migrate Existing Odoo Data
 
