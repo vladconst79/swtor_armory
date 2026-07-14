@@ -15,6 +15,7 @@ from app.db.session import get_db
 from app.main import app
 from app.models import (
     Character,
+    CharacterCrewSkillRelation,
     CrewSkill,
     Item,
     Loadout,
@@ -311,3 +312,45 @@ def test_operation_lockout_list_supports_current_week_and_relationship_filters(
     assert current_response.json()["data"][0]["week"] == week_start.isoformat()
     assert operation_response.status_code == 200
     assert operation_response.json()["total"] == 2
+
+
+def test_character_crew_skill_relation_list_supports_relationship_filters(
+    api_client: TestClient,
+    api_db: Session,
+) -> None:
+    character = Character(name="Crew Character", faction="republic", owner_id=2)
+    other_character = Character(name="Other Crew Character", faction="empire", owner_id=3)
+    crew_skill = api_db.scalar(select(CrewSkill).where(CrewSkill.name == "Bioanalysis"))
+    other_crew_skill = api_db.scalar(select(CrewSkill).where(CrewSkill.name == "Diplomacy"))
+    relation = CharacterCrewSkillRelation(
+        owner_id=2,
+        character=character,
+        crew_skill=crew_skill,
+        level=350,
+    )
+    other_relation = CharacterCrewSkillRelation(
+        owner_id=3,
+        character=other_character,
+        crew_skill=other_crew_skill,
+        level=700,
+    )
+    relation.sync_derived_fields()
+    other_relation.sync_derived_fields()
+    api_db.add_all([relation, other_relation])
+    api_db.commit()
+
+    character_response = api_client.get(
+        f'/api/character-crew-skill-relations?filter={{"character_ids":[{character.id}]}}',
+        headers=auth_headers(2),
+    )
+    crew_skill_response = api_client.get(
+        f'/api/character-crew-skill-relations?filter={{"crew_skill_ids":[{crew_skill.id}]}}',
+        headers=auth_headers(2),
+    )
+
+    assert character_response.status_code == 200
+    assert character_response.json()["total"] == 1
+    assert character_response.json()["data"][0]["display_name"] == "Crew Character - Bioanalysis"
+    assert crew_skill_response.status_code == 200
+    assert crew_skill_response.json()["total"] == 1
+    assert crew_skill_response.json()["data"][0]["progress"] == 50

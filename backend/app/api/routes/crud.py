@@ -204,6 +204,11 @@ def _apply_filters(
             if relationship_query is not None:
                 query = relationship_query
                 continue
+        if model is CharacterCrewSkillRelation:
+            relationship_query = _apply_character_crew_skill_relation_filter(query, field, value)
+            if relationship_query is not None:
+                query = relationship_query
+                continue
         if model is OperationLockout:
             relationship_query = _apply_operation_lockout_filter(query, field, value)
             if relationship_query is not None:
@@ -300,6 +305,23 @@ def _apply_operation_lockout_filter(query: Select[Any], field: str, value: Any) 
         return query.where(OperationLockout.difficulty_id.in_(values))
     if field in {"boss_id", "boss_ids"}:
         return query.where(OperationLockout.boss_id.in_(values))
+    return None
+
+
+def _apply_character_crew_skill_relation_filter(
+    query: Select[Any],
+    field: str,
+    value: Any,
+) -> Select[Any] | None:
+    values = value if isinstance(value, list) else [value]
+    values = [filter_value for filter_value in values if filter_value not in {None, ""}]
+    if not values:
+        return query
+
+    if field in {"character_id", "character_ids"}:
+        return query.where(CharacterCrewSkillRelation.character_id.in_(values))
+    if field in {"crew_skill_id", "crew_skill_ids"}:
+        return query.where(CharacterCrewSkillRelation.crew_skill_id.in_(values))
     return None
 
 

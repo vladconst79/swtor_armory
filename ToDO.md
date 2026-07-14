@@ -328,7 +328,7 @@ frontend/
 * [x] Build loadout list and form.
 * [x] Build item list and form.
 * [x] Build crew skill screens.
-* [ ] Build character crew skill editor.
+* [x] Build character crew skill editor.
 * [x] Build operation screens.
 * [x] Build operation lockout screen with current-week default.
 * [x] Build origin story, class, role, and spec screens.

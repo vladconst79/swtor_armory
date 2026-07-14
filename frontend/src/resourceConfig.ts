@@ -66,6 +66,19 @@ export const resources: ResourceDefinition[] = [
     ],
   },
   {
+    name: 'character-crew-skill-relations',
+    label: 'Character Crew Skills',
+    fields: [
+      { source: 'id', kind: 'number', readOnly: true },
+      { source: 'display_name', label: 'Display Name', readOnly: true },
+      { source: 'character_id', label: 'Character', kind: 'number' },
+      { source: 'crew_skill_id', label: 'Crew Skill', kind: 'number' },
+      { source: 'level', kind: 'number' },
+      { source: 'progress', kind: 'number', readOnly: true },
+      { source: 'active', kind: 'boolean' },
+    ],
+  },
+  {
     name: 'operations',
     label: 'Operations',
     adminManaged: true,
