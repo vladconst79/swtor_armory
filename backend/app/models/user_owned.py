@@ -16,7 +16,19 @@ from app.models.associations import (
     character_vehicles,
 )
 from app.models.mixins import ActiveMixin, IdMixin, OwnedModelMixin, TimestampMixin
-from app.models.reference import ClassName, CrewSkill, Guild, OriginStory, Role, Spec, Title, Vehicle
+from app.models.reference import (
+    ClassName,
+    CrewSkill,
+    Guild,
+    Operation,
+    OperationBoss,
+    OperationDifficulty,
+    OriginStory,
+    Role,
+    Spec,
+    Title,
+    Vehicle,
+)
 
 
 class Character(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
@@ -354,3 +366,68 @@ class OperationLockout(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Ba
     faction: Mapped[str | None] = mapped_column(String(50), index=True)
 
     character: Mapped[Character] = relationship(back_populates="operation_lockouts")
+    boss: Mapped[OperationBoss] = relationship("OperationBoss")
+    operation: Mapped[Operation] = relationship("Operation")
+    difficulty: Mapped[OperationDifficulty] = relationship("OperationDifficulty")
+
+    @staticmethod
+    def reset_week_for(day: date) -> date:
+        days_since_tuesday = (day.weekday() - 1) % 7
+        return day.fromordinal(day.toordinal() - days_since_tuesday)
+
+    @staticmethod
+    def reset_week_end(reset_week: date) -> date:
+        return reset_week.fromordinal(reset_week.toordinal() + 6)
+
+    @classmethod
+    def current_week_filter(cls, today: date) -> tuple[date, date]:
+        reset_week = cls.reset_week_for(today)
+        return reset_week, cls.reset_week_end(reset_week)
+
+    @classmethod
+    def filter_current_week(cls, lockouts: list["OperationLockout"], today: date) -> list["OperationLockout"]:
+        week_start, week_end = cls.current_week_filter(today)
+        return [lockout for lockout in lockouts if lockout.week is not None and week_start <= lockout.week <= week_end]
+
+    @staticmethod
+    def sort_by_week_descending(lockouts: list["OperationLockout"]) -> list["OperationLockout"]:
+        return sorted(lockouts, key=lambda lockout: lockout.week or date.min, reverse=True)
+
+    def derive_name(self) -> str | None:
+        if self.operation is None or self.difficulty is None or self.week is None:
+            return None
+
+        week_start = self.reset_week_for(self.week)
+        week_end = self.reset_week_end(week_start)
+        return f"{self.operation.name} - {self.difficulty.name} - {week_start} - {week_end}"
+
+    def derive_faction(self) -> str | None:
+        return self.character.faction if self.character is not None else None
+
+    def derive_completion_rate(self) -> float:
+        if self.boss is None or self.boss.operation is None:
+            return 0.0
+
+        bosses = self.boss.operation.bosses
+        if not bosses:
+            return 0.0
+
+        completed_bosses = [boss for boss in bosses if boss.sequence <= self.boss.sequence]
+        return len(completed_bosses) / len(bosses) * 100
+
+    def sync_derived_fields(self) -> None:
+        self.name = self.derive_name()
+        self.faction = self.derive_faction()
+        self.completion_rate = self.derive_completion_rate()
+
+    def duplicate_key(self) -> tuple[int | None, int | None, int | None, date | None]:
+        character_id = self.character_id or (self.character.id if self.character is not None else None)
+        boss_id = self.boss_id or (self.boss.id if self.boss is not None else None)
+        difficulty_id = self.difficulty_id or (self.difficulty.id if self.difficulty is not None else None)
+        return character_id, boss_id, difficulty_id, self.week
+
+    def validate_unique_lockout(self, existing_lockouts: list["OperationLockout"]) -> None:
+        own_key = self.duplicate_key()
+        for lockout in existing_lockouts:
+            if lockout is not self and lockout.duplicate_key() == own_key:
+                raise ValueError("Character already has a lockout for this boss, difficulty, and week.")

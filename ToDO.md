@@ -201,16 +201,16 @@ frontend/
 
 ## 9. Port Operation and Lockout Rules
 
-* [ ] Add operation fields from `models/operation.py`.
-* [ ] Add operation difficulty fields.
-* [ ] Add operation boss fields.
-* [ ] Add operation lockout fields.
-* [ ] Sort lockouts by week descending.
-* [ ] Derive lockout display name from operation, difficulty, and reset week.
-* [ ] Derive lockout faction from character.
-* [ ] Derive completion rate from boss sequence and operation boss count.
-* [ ] Enforce unique lockout per character, boss, difficulty, and week.
-* [ ] Add default current-week filtering support for the frontend.
+* [x] Add operation fields from `models/operation.py`.
+* [x] Add operation difficulty fields.
+* [x] Add operation boss fields.
+* [x] Add operation lockout fields.
+* [x] Sort lockouts by week descending.
+* [x] Derive lockout display name from operation, difficulty, and reset week.
+* [x] Derive lockout faction from character.
+* [x] Derive completion rate from boss sequence and operation boss count.
+* [x] Enforce unique lockout per character, boss, difficulty, and week.
+* [x] Add default current-week filtering support for the frontend.
 
 ## 10. Port Titles, Vehicles, and Guilds
 
