@@ -12,7 +12,7 @@ from app.db.base import Base
 from app.db.seed import seed_reference_data
 from app.db.session import get_db
 from app.main import app
-from app.models import Character, CrewSkill, OriginStory, Role, User
+from app.models import Character, CrewSkill, Item, Loadout, OriginStory, Role, User
 
 
 @pytest.fixture
@@ -226,3 +226,33 @@ def test_user_cannot_attach_record_to_another_users_character(api_client: TestCl
     )
 
     assert response.status_code == 403
+
+
+def test_loadout_and_item_lists_support_character_and_mine_filters(
+    api_client: TestClient,
+    api_db: Session,
+) -> None:
+    owned_character = Character(name="Owned Character", faction="republic", owner_id=2)
+    other_character = Character(name="Other Character", faction="empire", owner_id=3)
+    loadout = Loadout(name="Owned Loadout", loadout_type="pve", owner_id=2, characters=[owned_character])
+    item = Item(name="Owned Item", owner_id=2, characters=[owned_character])
+    other_item = Item(name="Other Item", owner_id=3, characters=[other_character])
+    api_db.add_all([owned_character, other_character, loadout, item, other_item])
+    api_db.commit()
+
+    loadout_response = api_client.get(
+        f'/api/loadouts?filter={{"character_ids":[{owned_character.id}]}}',
+        headers=auth_headers(2),
+    )
+    item_response = api_client.get(
+        f'/api/items?filter={{"character_ids":[{owned_character.id}]}}',
+        headers=auth_headers(2),
+    )
+    mine_response = api_client.get('/api/items?filter={"mine":true}', headers=auth_headers(2))
+
+    assert loadout_response.status_code == 200
+    assert [record["name"] for record in loadout_response.json()["data"]] == ["Owned Loadout"]
+    assert item_response.status_code == 200
+    assert [record["name"] for record in item_response.json()["data"]] == ["Owned Item"]
+    assert mine_response.status_code == 200
+    assert [record["name"] for record in mine_response.json()["data"]] == ["Owned Item"]

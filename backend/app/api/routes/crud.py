@@ -195,8 +195,17 @@ def _apply_filters(
     for field, value in filters.items():
         if value is None or value == "":
             continue
+        relationship_query = _apply_relationship_filter(query, model, field, value, current_user)
+        if relationship_query is not None:
+            query = relationship_query
+            continue
+        if model in {Loadout, Item}:
+            relationship_query = _apply_character_link_filter(query, model, field, value)
+            if relationship_query is not None:
+                query = relationship_query
+                continue
         if model is Character:
-            relationship_query = _apply_character_relationship_filter(query, field, value, current_user)
+            relationship_query = _apply_character_relationship_filter(query, field, value)
             if relationship_query is not None:
                 query = relationship_query
                 continue
@@ -215,21 +224,30 @@ def _apply_filters(
     return query
 
 
+def _apply_relationship_filter(
+    query: Select[Any],
+    model: type[Any],
+    field: str,
+    value: Any,
+    current_user: User,
+) -> Select[Any] | None:
+    if field == "mine":
+        if model in OWNER_SCOPED_MODELS and bool(value):
+            return query.where(model.owner_id == current_user.id)
+        return query
+    return None
+
+
 def _apply_character_relationship_filter(
     query: Select[Any],
     field: str,
     value: Any,
-    current_user: User,
 ) -> Select[Any] | None:
     values = value if isinstance(value, list) else [value]
     values = [filter_value for filter_value in values if filter_value not in {None, ""}]
     if not values:
         return query
 
-    if field == "mine":
-        if bool(value):
-            return query.where(Character.owner_id == current_user.id)
-        return query
     if field in {"role_id", "role_ids"}:
         return query.where(Character.roles.any(Role.id.in_(values)))
     if field in {"class_name_id", "class_name_ids"}:
@@ -238,6 +256,22 @@ def _apply_character_relationship_filter(
         return query.where(Character.title_records.any(Title.id.in_(values)))
     if field in {"vehicle_id", "vehicle_ids"}:
         return query.where(Character.vehicle_records.any(Vehicle.id.in_(values)))
+    return None
+
+
+def _apply_character_link_filter(
+    query: Select[Any],
+    model: type[Any],
+    field: str,
+    value: Any,
+) -> Select[Any] | None:
+    values = value if isinstance(value, list) else [value]
+    values = [filter_value for filter_value in values if filter_value not in {None, ""}]
+    if not values:
+        return query
+
+    if field in {"character_id", "character_ids"}:
+        return query.where(model.characters.any(Character.id.in_(values)))
     return None
 
 

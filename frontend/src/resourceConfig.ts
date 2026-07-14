@@ -44,6 +44,17 @@ export const resources: ResourceDefinition[] = [
     ],
   },
   {
+    name: 'loadouts',
+    label: 'Loadouts',
+    fields: [
+      { source: 'id', kind: 'number', readOnly: true },
+      { source: 'name', required: true },
+      { source: 'loadout_type', label: 'Type', required: true },
+      { source: 'owner_id', label: 'Owner', kind: 'number', readOnly: true },
+      { source: 'active', kind: 'boolean' },
+    ],
+  },
+  {
     name: 'crew-skills',
     label: 'Crew Skills',
     adminManaged: true,

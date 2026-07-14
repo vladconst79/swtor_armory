@@ -3,6 +3,8 @@ import './App.css'
 import { authProvider } from './authProvider'
 import { CharacterCreate, CharacterEdit, CharacterList, CharacterShow } from './characters'
 import { dataProvider } from './dataProvider'
+import { ItemCreate, ItemEdit, ItemList, ItemShow } from './items'
+import { LoadoutCreate, LoadoutEdit, LoadoutList, LoadoutShow } from './loadouts'
 import { ResourceCreate, ResourceEdit, ResourceList, ResourceShow } from './resources'
 import { resources, type ResourceDefinition } from './resourceConfig'
 
@@ -67,6 +69,22 @@ const resourceComponents = (resource: ResourceDefinition) => {
       show: CharacterShow,
       create: CharacterCreate,
       edit: CharacterEdit,
+    }
+  }
+  if (resource.name === 'loadouts') {
+    return {
+      list: LoadoutList,
+      show: LoadoutShow,
+      create: LoadoutCreate,
+      edit: LoadoutEdit,
+    }
+  }
+  if (resource.name === 'items') {
+    return {
+      list: ItemList,
+      show: ItemShow,
+      create: ItemCreate,
+      edit: ItemEdit,
     }
   }
 

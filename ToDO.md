@@ -325,8 +325,8 @@ frontend/
     * [x] guild
     * [x] roles
 
-* [ ] Build loadout list and form.
-* [ ] Build item list and form.
+* [x] Build loadout list and form.
+* [x] Build item list and form.
 * [ ] Build crew skill screens.
 * [ ] Build character crew skill editor.
 * [ ] Build operation screens.
