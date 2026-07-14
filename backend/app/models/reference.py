@@ -1,5 +1,7 @@
+from typing import ClassVar
+
 from sqlalchemy import ForeignKey, Integer, LargeBinary, String, Text
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.db.base import Base
 from app.models.associations import (
@@ -17,6 +19,9 @@ from app.models.mixins import ActiveMixin, IdMixin, TimestampMixin
 class CrewSkill(IdMixin, TimestampMixin, ActiveMixin, Base):
     __tablename__ = "crew_skills"
 
+    ALLOWED_SKILL_TYPES: ClassVar[frozenset[str]] = frozenset({"crafting", "gathering", "mission"})
+    MAX_RELATED_SKILLS_FOR_CRAFTING: ClassVar[int] = 2
+
     name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
     skill_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
@@ -26,6 +31,35 @@ class CrewSkill(IdMixin, TimestampMixin, ActiveMixin, Base):
         primaryjoin=lambda: CrewSkill.id == crew_skill_related_skills.c.skill_id,
         secondaryjoin=lambda: CrewSkill.id == crew_skill_related_skills.c.related_skill_id,
     )
+
+    @validates("skill_type")
+    def validate_skill_type(self, key: str, skill_type: str) -> str:
+        if skill_type not in self.ALLOWED_SKILL_TYPES:
+            allowed_values = ", ".join(sorted(self.ALLOWED_SKILL_TYPES))
+            raise ValueError(f"Crew skill type must be one of: {allowed_values}.")
+        return skill_type
+
+    @property
+    def related_skill_domain(self) -> list[str]:
+        if self.skill_type == "crafting":
+            return ["gathering", "mission"]
+        return ["crafting"]
+
+    def add_related_skill(self, related_skill: "CrewSkill") -> None:
+        if related_skill not in self.related_skills:
+            self.related_skills.append(related_skill)
+        if self not in related_skill.related_skills:
+            related_skill.related_skills.append(self)
+
+    def validate_related_skill_rules(self) -> None:
+        for related_skill in self.related_skills:
+            if related_skill.skill_type not in self.related_skill_domain:
+                raise ValueError("Related crew skills must match the allowed skill type pairing.")
+
+        if self.skill_type == "crafting" and len(self.related_skills) > self.MAX_RELATED_SKILLS_FOR_CRAFTING:
+            raise ValueError(
+                f"Crafting crew skills can have no more than {self.MAX_RELATED_SKILLS_FOR_CRAFTING} related skills."
+            )
 
 
 class Operation(IdMixin, TimestampMixin, ActiveMixin, Base):

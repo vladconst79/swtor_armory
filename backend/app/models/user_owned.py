@@ -173,6 +173,8 @@ class Item(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
 class CharacterCrewSkillRelation(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
     __tablename__ = "character_crew_skill_relations"
 
+    MAX_LEVEL: ClassVar[int] = 700
+
     name: Mapped[str | None] = mapped_column(String(255))
     display_name: Mapped[str | None] = mapped_column(String(255))
     character_id: Mapped[int] = mapped_column(ForeignKey("characters.id"), nullable=False, index=True)
@@ -183,6 +185,23 @@ class CharacterCrewSkillRelation(IdMixin, TimestampMixin, ActiveMixin, OwnedMode
 
     character: Mapped[Character] = relationship(back_populates="crew_skill_relations")
     crew_skill: Mapped[CrewSkill] = relationship("CrewSkill")
+
+    @validates("level")
+    def validate_level(self, key: str, level: int) -> int:
+        if not 1 <= level <= self.MAX_LEVEL:
+            raise ValueError(f"Crew skill level must be between 1 and {self.MAX_LEVEL}.")
+        return level
+
+    def derive_progress(self) -> float:
+        return self.level / self.MAX_LEVEL * 100
+
+    def sync_derived_fields(self) -> None:
+        if self.crew_skill is not None:
+            self.name = self.crew_skill.name
+            self.skill_type = self.crew_skill.skill_type
+        if self.character is not None and self.crew_skill is not None:
+            self.display_name = f"{self.character.name} - {self.crew_skill.name}"
+        self.progress = self.derive_progress()
 
 
 class OperationLockout(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):

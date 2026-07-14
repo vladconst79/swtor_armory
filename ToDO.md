@@ -146,17 +146,17 @@ frontend/
 
 ## 6. Port Crew Skill Rules
 
-* [ ] Add crew skill fields from `models/crew_skill.py`.
-* [ ] Support skill types:
+* [x] Add crew skill fields from `models/crew_skill.py`.
+* [x] Support skill types:
 
-    * [ ] crafting
-    * [ ] gathering
-    * [ ] mission
+    * [x] crafting
+    * [x] gathering
+    * [x] mission
 
-* [ ] Validate character crew skill level is between 1 and 700.
-* [ ] Derive progress as `level / 700 * 100`.
-* [ ] Keep related skill behavior from the old addon.
-* [ ] Decide whether to preserve the old related-skill warning behavior or make it a hard validation.
+* [x] Validate character crew skill level is between 1 and 700.
+* [x] Derive progress as `level / 700 * 100`.
+* [x] Keep related skill behavior from the old addon.
+* [x] Decide whether to preserve the old related-skill warning behavior or make it a hard validation.
 
 ## 7. Port Loadout Rules
 
