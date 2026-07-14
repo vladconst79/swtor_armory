@@ -2,6 +2,7 @@ import { Admin, Resource } from 'react-admin'
 import './App.css'
 import { authProvider } from './authProvider'
 import { CharacterCreate, CharacterEdit, CharacterList, CharacterShow } from './characters'
+import { CrewSkillCreate, CrewSkillEdit, CrewSkillList, CrewSkillShow } from './crewSkills'
 import { dataProvider } from './dataProvider'
 import { ItemCreate, ItemEdit, ItemList, ItemShow } from './items'
 import { LoadoutCreate, LoadoutEdit, LoadoutList, LoadoutShow } from './loadouts'
@@ -85,6 +86,14 @@ const resourceComponents = (resource: ResourceDefinition) => {
       show: ItemShow,
       create: ItemCreate,
       edit: ItemEdit,
+    }
+  }
+  if (resource.name === 'crew-skills') {
+    return {
+      list: CrewSkillList,
+      show: CrewSkillShow,
+      create: CrewSkillCreate,
+      edit: CrewSkillEdit,
     }
   }
 
