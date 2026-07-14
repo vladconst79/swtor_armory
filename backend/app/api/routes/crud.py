@@ -82,7 +82,7 @@ def create_crud_router(config: ResourceConfig) -> APIRouter:
         current_user: User = Depends(get_current_active_user),
     ) -> dict[str, Any]:
         filters = _parse_filter(filter)
-        query = _apply_filters(select(config.model), config.model, filters)
+        query = _apply_filters(select(config.model), config.model, filters, current_user)
         if config.owner_scoped:
             query = apply_owner_filter(query, config.model, current_user)
 
@@ -185,11 +185,21 @@ def _parse_filter(raw_filter: str | None) -> dict[str, Any]:
     return parsed
 
 
-def _apply_filters(query: Select[Any], model: type[Any], filters: dict[str, Any]) -> Select[Any]:
+def _apply_filters(
+    query: Select[Any],
+    model: type[Any],
+    filters: dict[str, Any],
+    current_user: User,
+) -> Select[Any]:
     mapper = inspect(model)
     for field, value in filters.items():
         if value is None or value == "":
             continue
+        if model is Character:
+            relationship_query = _apply_character_relationship_filter(query, field, value, current_user)
+            if relationship_query is not None:
+                query = relationship_query
+                continue
         if field == "q" and hasattr(model, "name"):
             query = query.where(model.name.ilike(f"%{value}%"))
             continue
@@ -203,6 +213,32 @@ def _apply_filters(query: Select[Any], model: type[Any], filters: dict[str, Any]
         else:
             query = query.where(column == _coerce_column_value(column, value))
     return query
+
+
+def _apply_character_relationship_filter(
+    query: Select[Any],
+    field: str,
+    value: Any,
+    current_user: User,
+) -> Select[Any] | None:
+    values = value if isinstance(value, list) else [value]
+    values = [filter_value for filter_value in values if filter_value not in {None, ""}]
+    if not values:
+        return query
+
+    if field == "mine":
+        if bool(value):
+            return query.where(Character.owner_id == current_user.id)
+        return query
+    if field in {"role_id", "role_ids"}:
+        return query.where(Character.roles.any(Role.id.in_(values)))
+    if field in {"class_name_id", "class_name_ids"}:
+        return query.where(Character.class_names.any(ClassName.id.in_(values)))
+    if field in {"title_id", "title_ids"}:
+        return query.where(Character.title_records.any(Title.id.in_(values)))
+    if field in {"vehicle_id", "vehicle_ids"}:
+        return query.where(Character.vehicle_records.any(Vehicle.id.in_(values)))
+    return None
 
 
 def _apply_sort(query: Select[Any], model: type[Any], sort: str, order: str) -> Select[Any]:

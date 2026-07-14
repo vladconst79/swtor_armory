@@ -1,6 +1,7 @@
 import { Admin, Resource } from 'react-admin'
 import './App.css'
 import { authProvider } from './authProvider'
+import { CharacterCreate, CharacterEdit, CharacterList, CharacterShow } from './characters'
 import { dataProvider } from './dataProvider'
 import { ResourceCreate, ResourceEdit, ResourceList, ResourceShow } from './resources'
 import { resources, type ResourceDefinition } from './resourceConfig'
@@ -59,6 +60,24 @@ const showFor = (resource: ResourceDefinition) => () => <ResourceShow resource={
 const createFor = (resource: ResourceDefinition) => () => <ResourceCreate resource={resource} />
 const editFor = (resource: ResourceDefinition) => () => <ResourceEdit resource={resource} />
 
+const resourceComponents = (resource: ResourceDefinition) => {
+  if (resource.name === 'characters') {
+    return {
+      list: CharacterList,
+      show: CharacterShow,
+      create: CharacterCreate,
+      edit: CharacterEdit,
+    }
+  }
+
+  return {
+    list: listFor(resource),
+    show: showFor(resource),
+    create: createFor(resource),
+    edit: editFor(resource),
+  }
+}
+
 function App() {
   return (
     <Admin
@@ -69,17 +88,20 @@ function App() {
       theme={theme}
       requireAuth
     >
-      {resources.map((resource) => (
-        <Resource
-          key={resource.name}
-          name={resource.name}
-          options={{ label: resource.label }}
-          list={listFor(resource)}
-          show={showFor(resource)}
-          create={createFor(resource)}
-          edit={editFor(resource)}
-        />
-      ))}
+      {resources.map((resource) => {
+        const components = resourceComponents(resource)
+        return (
+          <Resource
+            key={resource.name}
+            name={resource.name}
+            options={{ label: resource.label }}
+            list={components.list}
+            show={components.show}
+            create={components.create}
+            edit={components.edit}
+          />
+        )
+      })}
     </Admin>
   )
 }

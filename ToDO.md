@@ -314,16 +314,16 @@ frontend/
 
 ## 14. Build Frontend Resources
 
-* [ ] Build character list.
-* [ ] Build character kanban/card view equivalent.
-* [ ] Build character create/edit form.
-* [ ] Add character filters:
+* [x] Build character list.
+* [x] Build character kanban/card view equivalent.
+* [x] Build character create/edit form.
+* [x] Add character filters:
 
-    * [ ] my characters
-    * [ ] faction
-    * [ ] server
-    * [ ] guild
-    * [ ] roles
+    * [x] my characters
+    * [x] faction
+    * [x] server
+    * [x] guild
+    * [x] roles
 
 * [ ] Build loadout list and form.
 * [ ] Build item list and form.

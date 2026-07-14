@@ -61,6 +61,76 @@
   background: rgba(23, 29, 37, 0.92);
 }
 
+.character-card-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.character-card {
+  display: grid;
+  gap: 14px;
+  min-height: 190px;
+  padding: 16px;
+  border: 1px solid rgba(214, 179, 90, 0.24);
+  border-radius: 6px;
+  background: #171d25;
+  color: #e9edf2;
+}
+
+.character-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.character-card__header h3 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.character-card__header p {
+  margin: 0;
+  color: #aeb7c2;
+  font-size: 13px;
+}
+
+.character-card__header span {
+  align-self: flex-start;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(127, 182, 217, 0.18);
+  color: #b9dcf2;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.character-card dl {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.character-card dt {
+  color: #aeb7c2;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.character-card dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.character-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
 @media (max-width: 900px) {
   .dashboard {
     grid-template-columns: 1fr;

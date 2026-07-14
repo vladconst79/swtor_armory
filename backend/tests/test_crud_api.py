@@ -12,7 +12,7 @@ from app.db.base import Base
 from app.db.seed import seed_reference_data
 from app.db.session import get_db
 from app.main import app
-from app.models import Character, CrewSkill, OriginStory, User
+from app.models import Character, CrewSkill, OriginStory, Role, User
 
 
 @pytest.fixture
@@ -177,6 +177,26 @@ def test_admin_can_read_other_users_records(api_client: TestClient, api_db: Sess
 
     assert response.status_code == 200
     assert response.json()["total"] == 1
+
+
+def test_character_list_supports_relationship_and_mine_filters(api_client: TestClient, api_db: Session) -> None:
+    tank = api_db.scalar(select(Role).where(Role.name == "Tank"))
+    dps = api_db.scalar(select(Role).where(Role.name == "DPS"))
+    owned_character = Character(name="Tank Character", faction="republic", owner_id=2, roles=[tank])
+    other_character = Character(name="DPS Character", faction="empire", owner_id=3, roles=[dps])
+    api_db.add_all([owned_character, other_character])
+    api_db.commit()
+
+    role_response = api_client.get(
+        f'/api/characters?filter={{"role_ids":[{tank.id}]}}',
+        headers=auth_headers(1),
+    )
+    mine_response = api_client.get('/api/characters?filter={"mine":true}', headers=auth_headers(2))
+
+    assert role_response.status_code == 200
+    assert [record["name"] for record in role_response.json()["data"]] == ["Tank Character"]
+    assert mine_response.status_code == 200
+    assert [record["name"] for record in mine_response.json()["data"]] == ["Tank Character"]
 
 
 def test_user_owned_constraints_return_bad_request(api_client: TestClient) -> None:
