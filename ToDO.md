@@ -173,31 +173,31 @@ frontend/
 
 ## 8. Port Item Rules
 
-* [ ] Add item fields from `models/item.py`.
-* [ ] Support item rarity values:
+* [x] Add item fields from `models/item.py`.
+* [x] Support item rarity values:
 
-    * [ ] common
-    * [ ] uncommon
-    * [ ] rare
-    * [ ] epic
-    * [ ] legendary
+    * [x] common
+    * [x] uncommon
+    * [x] rare
+    * [x] epic
+    * [x] legendary
 
-* [ ] Support binding values:
+* [x] Support binding values:
 
-    * [ ] none
-    * [ ] bind on pickup
-    * [ ] bind on equip
-    * [ ] bind on legacy
+    * [x] none
+    * [x] bind on pickup
+    * [x] bind on equip
+    * [x] bind on legacy
 
-* [ ] Support cargo hold values:
+* [x] Support cargo hold values:
 
-    * [ ] personal cargo hold
-    * [ ] legacy cargo hold
-    * [ ] guild cargo hold
+    * [x] personal cargo hold
+    * [x] legacy cargo hold
+    * [x] guild cargo hold
 
-* [ ] Validate cargo bay range.
-* [ ] Ensure bound items stay in personal cargo hold.
-* [ ] Ensure legacy-bound items cannot be stored in guild cargo hold.
+* [x] Validate cargo bay range.
+* [x] Ensure bound items stay in personal cargo hold.
+* [x] Ensure legacy-bound items cannot be stored in guild cargo hold.
 
 ## 9. Port Operation and Lockout Rules
 

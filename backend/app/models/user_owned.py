@@ -238,14 +238,73 @@ class Loadout(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
 class Item(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
     __tablename__ = "items"
 
+    ALLOWED_RARITIES: ClassVar[frozenset[str]] = frozenset({"common", "uncommon", "rare", "epic", "legendary"})
+    ALLOWED_BINDINGS: ClassVar[frozenset[str]] = frozenset(
+        {"none", "bind_on_pickup", "bind_on_equip", "bind_on_legacy"}
+    )
+    ALLOWED_CARGO_HOLDS: ClassVar[frozenset[str]] = frozenset(
+        {"cargo_hold", "cargo_hold_shared", "cargo_hold_guild"}
+    )
+    MAX_CARGO_BAY: ClassVar[int] = 8
+
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
-    rarity: Mapped[str] = mapped_column(String(50), nullable=False, server_default="common", index=True)
-    binding: Mapped[str] = mapped_column(String(50), nullable=False, server_default="none", index=True)
-    bound: Mapped[bool] = mapped_column(nullable=False, server_default="false", index=True)
-    cargo_hold: Mapped[str] = mapped_column(String(50), nullable=False, server_default="cargo_hold", index=True)
-    cargo_bay: Mapped[int] = mapped_column(Integer, nullable=False, server_default="1", index=True)
+    rarity: Mapped[str] = mapped_column(String(50), nullable=False, default="common", server_default="common", index=True)
+    binding: Mapped[str] = mapped_column(String(50), nullable=False, default="none", server_default="none", index=True)
+    bound: Mapped[bool] = mapped_column(default=False, nullable=False, server_default="false", index=True)
+    cargo_hold: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False,
+        default="cargo_hold",
+        server_default="cargo_hold",
+        index=True,
+    )
+    cargo_bay: Mapped[int] = mapped_column(Integer, nullable=False, default=1, server_default="1", index=True)
 
     characters: Mapped[list[Character]] = relationship(secondary=character_items, back_populates="items")
+
+    @validates("rarity")
+    def validate_rarity(self, key: str, rarity: str) -> str:
+        if rarity not in self.ALLOWED_RARITIES:
+            allowed_values = ", ".join(sorted(self.ALLOWED_RARITIES))
+            raise ValueError(f"Item rarity must be one of: {allowed_values}.")
+        return rarity
+
+    @validates("binding")
+    def validate_binding(self, key: str, binding: str) -> str:
+        if binding not in self.ALLOWED_BINDINGS:
+            allowed_values = ", ".join(sorted(self.ALLOWED_BINDINGS))
+            raise ValueError(f"Item binding must be one of: {allowed_values}.")
+        return binding
+
+    @validates("cargo_hold")
+    def validate_cargo_hold(self, key: str, cargo_hold: str) -> str:
+        if cargo_hold not in self.ALLOWED_CARGO_HOLDS:
+            allowed_values = ", ".join(sorted(self.ALLOWED_CARGO_HOLDS))
+            raise ValueError(f"Item cargo hold must be one of: {allowed_values}.")
+        return cargo_hold
+
+    @validates("cargo_bay")
+    def validate_cargo_bay(self, key: str, cargo_bay: int) -> int:
+        if not 1 <= cargo_bay <= self.MAX_CARGO_BAY:
+            raise ValueError(f"Cargo bay must be between 1 and {self.MAX_CARGO_BAY}.")
+        return cargo_bay
+
+    def validate_item_rules(self) -> None:
+        rarity = self.rarity or "common"
+        binding = self.binding or "none"
+        cargo_hold = self.cargo_hold or "cargo_hold"
+        cargo_bay = self.cargo_bay or 1
+
+        self.validate_rarity("rarity", rarity)
+        self.validate_binding("binding", binding)
+        self.validate_cargo_hold("cargo_hold", cargo_hold)
+        self.validate_cargo_bay("cargo_bay", cargo_bay)
+
+        if self.bound and cargo_hold != "cargo_hold":
+            raise ValueError("Bound items must be stored in personal cargo hold.")
+
+        if binding == "bind_on_legacy" and cargo_hold == "cargo_hold_guild":
+            raise ValueError("Legacy-bound items cannot be stored in guild cargo hold.")
 
 
 class CharacterCrewSkillRelation(IdMixin, TimestampMixin, ActiveMixin, OwnedModelMixin, Base):
