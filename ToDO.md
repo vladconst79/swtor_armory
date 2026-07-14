@@ -88,13 +88,13 @@ frontend/
     * [x] `owner_id` for user-owned records
     * [x] `active`
 
-* [ ] Create user-owned models:
+* [x] Create user-owned models:
 
-    * [ ] `Character`
-    * [ ] `Loadout`
-    * [ ] `Item`
-    * [ ] `CharacterCrewSkillRelation`
-    * [ ] `OperationLockout`
+    * [x] `Character`
+    * [x] `Loadout`
+    * [x] `Item`
+    * [x] `CharacterCrewSkillRelation`
+    * [x] `OperationLockout`
 
 * [ ] Create reference/admin-managed models:
 
