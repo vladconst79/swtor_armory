@@ -1,0 +1,21 @@
+[Unit]
+Description=SWTOR Armory API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=swtor-armory
+Group=swtor-armory
+WorkingDirectory=/opt/swtor_new_armory/backend
+EnvironmentFile=-/opt/swtor_new_armory/backend/.env
+Environment=PYTHONUNBUFFERED=1
+ExecStartPre=/opt/swtor_new_armory/backend/.venv/bin/alembic upgrade head
+ExecStart=/opt/swtor_new_armory/backend/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --proxy-headers
+Restart=on-failure
+RestartSec=5
+KillSignal=SIGINT
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target
