@@ -23,6 +23,8 @@ backend:test:
     - apt-get update
     - apt-get install -y --no-install-recommends libpq5
     - cd backend
+    - cp alembic.example.ini alembic.ini
+    - cp app/core/config.example.py app/core/config.py
     - python -m venv .venv
     - .venv/bin/python -m pip install --upgrade pip
     - .venv/bin/python -m pip install -r requirements.txt
