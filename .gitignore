@@ -28,6 +28,10 @@ lerna-debug.log*
 !.env.example
 !backend/.env.example
 !frontend/.env.example
+backend/alembic.ini
+backend/app/core/config.py
+!backend/alembic.example.ini
+!backend/app/core/config.example.py
 DBConf.md
 *.local
 
