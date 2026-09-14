@@ -1,15 +1,21 @@
 # SWTOR Armory
 
-SWTOR Armory is a rebuild of the old Odoo 16 `swtor_armory` addon as a standalone web app.
+SWTOR Armory is a standalone remake of the original Odoo 16 `swtor_armory` addon. It keeps the same goal, helping Star Wars: The Old Republic players manage character and legacy information, while moving the project onto a more modern and independent application stack.
 
-The target stack is:
+The old Odoo addon was published separately at:
+
+```text
+https://github.com/vladconst79/swtor_armory_odoo
+```
+
+This repository is the new implementation:
 
 ```text
 backend/   FastAPI + SQLAlchemy + Alembic + PostgreSQL
 frontend/  React + TypeScript + React Admin
 ```
 
-The old Odoo addon is the source of truth for the initial rebuild:
+The Odoo addon remains the source of truth for the initial data model, permissions, and domain behavior:
 
 ```text
 /opt/odoo16c/custom/addons/swtor_armory/docs/rebuild-notes.md
@@ -19,20 +25,30 @@ The old Odoo addon is the source of truth for the initial rebuild:
 /opt/odoo16c/custom/addons/swtor_armory/__init__.py
 ```
 
+## Features
+
+* Manage SWTOR characters, guilds, roles, origin stories, combat styles, titles, vehicles, and notes.
+* Track loadouts, items, crew skills, operation bosses, weekly lockouts, and related gameplay metadata.
+* Provide a REST API backed by PostgreSQL with Alembic-managed migrations.
+* Enforce owner-only access for player-owned records and admin-only writes for shared reference data.
+* Expose an admin frontend built with React Admin for practical data entry and maintenance.
+* Seed SWTOR reference data idempotently after database migrations.
+
 ## Project Layout
 
 ```text
 .
-├── backend/    FastAPI backend
-├── frontend/   Vite React frontend
-├── ToDO.md     implementation roadmap
+├── backend/        FastAPI backend
+├── frontend/       Vite React frontend
+├── ToDO.md         implementation roadmap
+├── .gitlab-ci.yml  GitLab CI test and build pipeline
 └── README.md
 ```
 
 ## Requirements
 
 * Python 3.11+
-* Node.js and npm
+* Node.js 26+ and npm
 * PostgreSQL
 
 ## Backend Setup
@@ -61,6 +77,16 @@ Run backend tests:
 ```bash
 cd backend
 source .venv/bin/activate
+pytest
+```
+
+Run backend checks used by CI:
+
+```bash
+cd backend
+source .venv/bin/activate
+python -m compileall app alembic tests
+python -m alembic heads
 pytest
 ```
 
@@ -137,6 +163,26 @@ Normal users should only manage their own:
 
 SWTOR admins should be able to manage reference data and all user-owned records.
 
+## CI
+
+GitLab CI runs backend tests, frontend linting, and a frontend production build. The pipeline is defined in `.gitlab-ci.yml`.
+
+## Relationship to the Odoo Project
+
+This project is intentionally not an Odoo module. It is a remake of `swtor_armory` using standalone services and frontend tooling so it can evolve independently of an Odoo deployment.
+
+The Odoo repository remains useful as the historical implementation and migration reference. This project should preserve the important behavior from that addon while expressing it through explicit database migrations, API tests, and frontend resources.
+
 ## Implementation Plan
 
 See `ToDO.md` for the staged rebuild checklist.
+
+## Community Intent
+
+SWTOR Armory is a fan-made utility project. It is not affiliated with, endorsed by, sponsored by, or approved by Electronic Arts, BioWare, Lucasfilm, or Disney. Star Wars, Star Wars: The Old Republic, SWTOR, and related names and assets belong to their respective owners.
+
+The project exists to help players organize their gameplay information and to give the community a practical base to improve together.
+
+## License
+
+This project is licensed under the GNU Affero General Public License v3.0 or later. See [LICENSE](LICENSE) for the full license text.
