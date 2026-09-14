@@ -21,15 +21,8 @@ frontend/
 * [x] Add a root `README.md` with setup and run commands.
 * [x] Add `backend/.env.example`.
 * [x] Add `frontend/.env.example`.
-* [x] Document the old Odoo addon as the source of truth:
-
-```text
-/opt/odoo16c/custom/addons/swtor_armory/docs/rebuild-notes.md
-/opt/odoo16c/custom/addons/swtor_armory/models/
-/opt/odoo16c/custom/addons/swtor_armory/security/
-/opt/odoo16c/custom/addons/swtor_armory/views/menu.xml
-/opt/odoo16c/custom/addons/swtor_armory/__init__.py
-```
+* [x] Document the old Odoo addon as the historical reference:
+  [vladconst79/swtor_armory_odoo](https://github.com/vladconst79/swtor_armory_odoo).
 
 ## 2. Create Backend Skeleton
 

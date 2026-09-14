@@ -2,11 +2,8 @@
 
 SWTOR Armory is a standalone remake of the original Odoo 16 `swtor_armory` addon. It keeps the same goal, helping Star Wars: The Old Republic players manage character and legacy information, while moving the project onto a more modern and independent application stack.
 
-The old Odoo addon was published separately at:
-
-```text
-https://github.com/vladconst79/swtor_armory_odoo
-```
+The old Odoo addon was published separately at
+[vladconst79/swtor_armory_odoo](https://github.com/vladconst79/swtor_armory_odoo).
 
 This repository is the new implementation:
 
@@ -15,15 +12,7 @@ backend/   FastAPI + SQLAlchemy + Alembic + PostgreSQL
 frontend/  React + TypeScript + React Admin
 ```
 
-The Odoo addon remains the source of truth for the initial data model, permissions, and domain behavior:
-
-```text
-/opt/odoo16c/custom/addons/swtor_armory/docs/rebuild-notes.md
-/opt/odoo16c/custom/addons/swtor_armory/models/
-/opt/odoo16c/custom/addons/swtor_armory/security/
-/opt/odoo16c/custom/addons/swtor_armory/views/menu.xml
-/opt/odoo16c/custom/addons/swtor_armory/__init__.py
-```
+The Odoo addon remains the historical reference for the initial data model, permissions, and domain behavior.
 
 ## Features
 
@@ -53,9 +42,7 @@ The Odoo addon remains the source of truth for the initial data model, permissio
 
 ## Backend Setup
 
-The virtualenv already lives at `backend/.venv`.
-
-When setting up from scratch:
+Create a virtual environment and install the backend dependencies:
 
 ```bash
 cd backend
